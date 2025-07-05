@@ -20,108 +20,105 @@
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.btnScan = new System.Windows.Forms.Button();
-            this.dgvWiFiResults = new System.Windows.Forms.DataGridView();
-            this.lblStatus = new System.Windows.Forms.Label();
-            this.progressBarScan = new System.Windows.Forms.ProgressBar();
-            this.txtMinSignalStrength = new System.Windows.Forms.TextBox();
-            this.cmbEncryptionType = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvWiFiResults)).BeginInit();
-            this.SuspendLayout();
+            lblTitle = new Label();
+            btnScan = new Button();
+            dgvWiFiResults = new DataGridView();
+            lblStatus = new Label();
+            progressBarScan = new ProgressBar();
+            txtMinSignalStrength = new TextBox();
+            cmbEncryptionType = new ComboBox();
+            ((System.ComponentModel.ISupportInitialize)dgvWiFiResults).BeginInit();
+            SuspendLayout();
             // 
             // lblTitle
             // 
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(12, 9);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(560, 40);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Wi-Fi Network Scanner";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblTitle.BackColor = SystemColors.ActiveCaption;
+            lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblTitle.Location = new Point(12, 9);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(560, 40);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Wi-Fi Network Scanner";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnScan
             // 
-            this.btnScan.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnScan.Location = new System.Drawing.Point(430, 62);
-            this.btnScan.Name = "btnScan";
-            this.btnScan.Size = new System.Drawing.Size(142, 35);
-            this.btnScan.TabIndex = 2;
-            this.btnScan.Text = "Start Scan";
-            this.btnScan.UseVisualStyleBackColor = true;
-            this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
+            btnScan.Font = new Font("Segoe UI", 12F);
+            btnScan.Location = new Point(430, 62);
+            btnScan.Name = "btnScan";
+            btnScan.Size = new Size(142, 35);
+            btnScan.TabIndex = 2;
+            btnScan.Text = "Start Scan";
+            btnScan.UseVisualStyleBackColor = true;
+            btnScan.Click += btnScan_Click;
             // 
             // dgvWiFiResults
             // 
-            this.dgvWiFiResults.AllowUserToAddRows = false;
-            this.dgvWiFiResults.AllowUserToDeleteRows = false;
-            this.dgvWiFiResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                           | System.Windows.Forms.AnchorStyles.Left)
-                                                                           | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvWiFiResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvWiFiResults.Location = new System.Drawing.Point(15, 110);
-            this.dgvWiFiResults.Name = "dgvWiFiResults";
-            this.dgvWiFiResults.ReadOnly = true;
-            this.dgvWiFiResults.RowTemplate.Height = 25;
-            this.dgvWiFiResults.Size = new System.Drawing.Size(557, 300);
-            this.dgvWiFiResults.TabIndex = 3;
+            dgvWiFiResults.AllowUserToAddRows = false;
+            dgvWiFiResults.AllowUserToDeleteRows = false;
+            dgvWiFiResults.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvWiFiResults.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvWiFiResults.Location = new Point(15, 110);
+            dgvWiFiResults.Name = "dgvWiFiResults";
+            dgvWiFiResults.ReadOnly = true;
+            dgvWiFiResults.Size = new Size(557, 300);
+            dgvWiFiResults.TabIndex = 3;
             // 
             // lblStatus
             // 
-            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(15, 420);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(73, 15);
-            this.lblStatus.TabIndex = 4;
-            this.lblStatus.Text = "Status: Idle";
+            lblStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(15, 420);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(64, 15);
+            lblStatus.TabIndex = 4;
+            lblStatus.Text = "Status: Idle";
             // 
             // progressBarScan
             // 
-            this.progressBarScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarScan.Location = new System.Drawing.Point(400, 415);
-            this.progressBarScan.Name = "progressBarScan";
-            this.progressBarScan.Size = new System.Drawing.Size(172, 23);
-            this.progressBarScan.TabIndex = 5;
+            progressBarScan.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            progressBarScan.Location = new Point(400, 415);
+            progressBarScan.Name = "progressBarScan";
+            progressBarScan.Size = new Size(172, 23);
+            progressBarScan.TabIndex = 5;
             // 
             // txtMinSignalStrength
             // 
-            this.txtMinSignalStrength.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtMinSignalStrength.Location = new System.Drawing.Point(15, 62);
-            this.txtMinSignalStrength.Name = "txtMinSignalStrength";
-            this.txtMinSignalStrength.Size = new System.Drawing.Size(200, 29);
-            this.txtMinSignalStrength.TabIndex = 6;
-            this.txtMinSignalStrength.PlaceholderText = "Min Signal Strength (dBm)";
+            txtMinSignalStrength.Font = new Font("Segoe UI", 12F);
+            txtMinSignalStrength.Location = new Point(15, 62);
+            txtMinSignalStrength.Name = "txtMinSignalStrength";
+            txtMinSignalStrength.PlaceholderText = "Min Signal Strength (dBm)";
+            txtMinSignalStrength.Size = new Size(200, 29);
+            txtMinSignalStrength.TabIndex = 6;
             // 
             // cmbEncryptionType
             // 
-            this.cmbEncryptionType.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.cmbEncryptionType.FormattingEnabled = true;
-            this.cmbEncryptionType.Items.AddRange(new object[] { "All", "WEP", "WPA", "WPA2", "None" });
-            this.cmbEncryptionType.Location = new System.Drawing.Point(230, 62);
-            this.cmbEncryptionType.Name = "cmbEncryptionType";
-            this.cmbEncryptionType.Size = new System.Drawing.Size(170, 29);
-            this.cmbEncryptionType.TabIndex = 7;
-            this.cmbEncryptionType.SelectedIndex = 0;
+            cmbEncryptionType.Font = new Font("Segoe UI", 12F);
+            cmbEncryptionType.FormattingEnabled = true;
+            cmbEncryptionType.Items.AddRange(new object[] { "All", "WEP", "WPA", "WPA2", "None" });
+            cmbEncryptionType.Location = new Point(230, 62);
+            cmbEncryptionType.Name = "cmbEncryptionType";
+            cmbEncryptionType.Size = new Size(170, 29);
+            cmbEncryptionType.TabIndex = 7;
             // 
             // WiFiScannerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 450);
-            this.Controls.Add(this.cmbEncryptionType);
-            this.Controls.Add(this.txtMinSignalStrength);
-            this.Controls.Add(this.progressBarScan);
-            this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.dgvWiFiResults);
-            this.Controls.Add(this.btnScan);
-            this.Controls.Add(this.lblTitle);
-            this.MinimumSize = new System.Drawing.Size(600, 489);
-            this.Name = "WiFiScannerForm";
-            this.Text = "Wi-Fi Network Scanner";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvWiFiResults)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(584, 450);
+            Controls.Add(cmbEncryptionType);
+            Controls.Add(txtMinSignalStrength);
+            Controls.Add(progressBarScan);
+            Controls.Add(lblStatus);
+            Controls.Add(dgvWiFiResults);
+            Controls.Add(btnScan);
+            Controls.Add(lblTitle);
+            MinimumSize = new Size(600, 489);
+            Name = "WiFiScannerForm";
+            Text = "Wi-Fi Network Scanner";
+            ((System.ComponentModel.ISupportInitialize)dgvWiFiResults).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
     }
 }
