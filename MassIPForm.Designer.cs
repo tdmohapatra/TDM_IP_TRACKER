@@ -618,60 +618,11 @@ namespace TDM_IP_Tracker
             PerformLayout();
 
             // Create a new tab for section monitoring
-            InitializeSectionMonitoringTab();
+          
         }
 
         // Then in your initialization code:
-        private void InitializeSectionMonitoringTab()
-        {
-            TabPage tabPageSections = new TabPage("Section Monitoring");
-            tabControl.TabPages.Add(tabPageSections);
-
-            // Ensure the tab page has a minimum size
-            tabPageSections.MinimumSize = new Size(100, 100);
-
-            // Use a SplitContainer for better layout management
-            SplitContainer splitContainer = new SplitContainer();
-            splitContainer.Dock = DockStyle.Fill;
-            splitContainer.Orientation = Orientation.Vertical;
-            splitContainer.SplitterDistance = 70; // 70% for chart, 30% for grid
-
-            // Initialize and configure the chart
-            sectionChart = new Chart();
-            sectionChart.Dock = DockStyle.Fill;
-            sectionChart.MinimumSize = new Size(100, 100);
-
-            ChartArea chartArea = new ChartArea();
-            sectionChart.ChartAreas.Add(chartArea);
-
-            Series series = new Series("Section Status");
-            series.ChartType = SeriesChartType.Column;
-            series.IsValueShownAsLabel = true;
-            sectionChart.Series.Add(series);
-
-            sectionChart.Legends.Add(new Legend());
-
- 
-            // In InitializeComponent()
-            sectionGridView = new DataGridView();
-            sectionGridView.Name = "sectionGridView";
-            sectionGridView.Dock = DockStyle.Fill;
-            sectionGridView.AutoGenerateColumns = false;
-
-            // Add columns
-            sectionGridView.Columns.Add("Section", "Section");
-            sectionGridView.Columns.Add("Count", "Count");
-            sectionGridView.Columns.Add("Status", "Status");
-            // Add controls to the split container
-            splitContainer.Panel1.Controls.Add(sectionChart);
-            splitContainer.Panel2.Controls.Add(sectionGridView);
-
-            // Add the split container to the tab page
-            tabPageSections.Controls.Add(splitContainer);
-
-            // Force a layout update
-            tabPageSections.PerformLayout();
-        }
+   
         #endregion
 
         public FlowLayoutPanel panelIPContainer;

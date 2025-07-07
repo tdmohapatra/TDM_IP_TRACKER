@@ -37,12 +37,14 @@ namespace TDM_IP_Tracker
         {
             InitializeComponent();
             InitializeApplication();
+            InitializeSectionMonitoringTab();
         }
 
         private void InitializeApplication()
         {
             InitializeDataGridView();
-            InitializeChart();
+            //InitializeChart();
+            UpdateChartBySection();
             InitializeSectionMonitoring();
             SetupTimers();
             ConfigureInitialUI();
@@ -55,6 +57,144 @@ namespace TDM_IP_Tracker
             dataGridViewDetails.Columns.Add("ResponseTime", "Response Time (ms)");
             dataGridViewDetails.Columns.Add("LastChecked", "Last Checked");
             dataGridViewDetails.Columns.Add("HostName", "Host Name");
+        }
+             private void InitializeSectionMonitoringTab()
+        {
+            TabPage tabPageSections = new TabPage("Section Monitoring");
+            tabControl.TabPages.Add(tabPageSections);
+
+            // Ensure the tab page has a minimum size
+            tabPageSections.MinimumSize = new Size(100, 100);
+
+            // Use a SplitContainer for better layout management
+            SplitContainer splitContainer = new SplitContainer();
+            splitContainer.Dock = DockStyle.Fill;
+            splitContainer.Orientation = Orientation.Vertical;
+            splitContainer.SplitterDistance = 100; // 70% for chart, 30% for grid
+
+            // Initialize and configure the chart
+            sectionChart = new Chart();
+            sectionChart.Dock = DockStyle.Fill;
+            sectionChart.MinimumSize = new Size(100, 100);
+
+            ChartArea chartArea = new ChartArea();
+            sectionChart.ChartAreas.Add(chartArea);
+
+            Series series = new Series("Section Status");
+            series.ChartType = SeriesChartType.Column;
+            series.IsValueShownAsLabel = true;
+            sectionChart.Series.Add(series);
+
+            sectionChart.Legends.Add(new Legend());
+
+ 
+            // In InitializeComponent()
+            sectionGridView = new DataGridView();
+            sectionGridView.Name = "sectionGridView";
+            sectionGridView.Dock = DockStyle.Fill;
+            sectionGridView.AutoGenerateColumns = false;
+
+            // Add columns
+            sectionGridView.Columns.Add("Section", "Section");
+            sectionGridView.Columns.Add("Count", "Count");
+            sectionGridView.Columns.Add("Status", "Status");
+            // Add controls to the split container
+            splitContainer.Panel1.Controls.Add(sectionChart);
+            splitContainer.Panel2.Controls.Add(sectionGridView);
+
+            // Add the split container to the tab page
+            tabPageSections.Controls.Add(splitContainer);
+
+            // Force a layout update
+            tabPageSections.PerformLayout();
+        }
+        private void UpdateSectionChart()
+        {
+            if (sectionChart == null) return;
+
+            var series = sectionChart.Series["Section Status"];
+            series.Points.Clear();
+
+            foreach (var section in sectionStats.Keys.OrderBy(s => s))
+            {
+                int total = sectionIPs[section].Count;
+                int active = sectionStats[section];
+
+                var point = new DataPoint
+                {
+                    AxisLabel = section,
+                    YValues = new double[] { active },
+                    Label = $"{active}/{total}",
+                    Color = Color.FromArgb(76, 175, 80),
+                    LabelForeColor = Color.Black
+                };
+
+                series.Points.Add(point);
+            }
+
+            if (sectionChart.ChartAreas.Count > 0)
+            {
+                var area = sectionChart.ChartAreas[0];
+
+                // Improve spacing and make chart full-width
+                area.AxisX.Interval = 1;
+                area.AxisX.LabelStyle.Angle = -45;
+
+                // Remove extra margins
+                area.Position.Auto = false;
+                area.Position.X = 0;
+                area.Position.Y = 0;
+                area.Position.Width = 100;
+                area.Position.Height = 100;
+
+                // Tighten inner plot margins
+                area.InnerPlotPosition.Auto = false;
+                area.InnerPlotPosition.X = 5;
+                area.InnerPlotPosition.Y = 5;
+                area.InnerPlotPosition.Width = 90;
+                area.InnerPlotPosition.Height = 90;
+            }
+        }
+
+        private void UpdateChartBySection()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(UpdateChartBySection));
+                return;
+            }
+
+            if (chartStatus == null) return;
+            if (ipControls == null || ipControls.Count == 0) return;
+
+            var grouped = ipControls
+                .GroupBy(ip => ip.Section)
+                .Select(g => new
+                {
+                    Section = g.Key,
+                    Total = g.Count(),
+                    Active = g.Count(ip => ip.LastStatus == IPStatus.Success)
+                }).ToList();
+
+            var series = chartStatus.Series["Section Availability"];
+            series.Points.Clear();
+
+            foreach (var group in grouped)
+            {
+                double availabilityPercent = group.Total > 0 ? (group.Active * 100.0 / group.Total) : 0;
+
+                // Add data point with availabilityPercent as Y value
+                var point = series.Points.Add(availabilityPercent);
+
+                // Label with section name and percentage
+                point.Label = $"{group.Section} ({availabilityPercent:F1}%)";
+
+                // Tooltip (optional)
+                point.ToolTip = $"{group.Section}: {availabilityPercent:F1}% availability";
+
+                // Legend text for the slice
+                point.LegendText = group.Section;
+            }
         }
 
         private void InitializeChart()
@@ -104,6 +244,7 @@ namespace TDM_IP_Tracker
                 sectionGrid.Columns["Availability"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
         }
+
 
 
         private void SetupTimers()
@@ -250,8 +391,10 @@ namespace TDM_IP_Tracker
 
                 TrackIPsAsync();
                 //CompleteTracking();
+               
             });
             CompleteTracking();
+             UpdateChartBySection();
         }
 
         private bool ValidateIPsToTrack()
@@ -382,8 +525,9 @@ namespace TDM_IP_Tracker
                 sectionStats[section] = active;
             }
 
-            UpdateSectionChart();
             UpdateSectionGridView();
+            UpdateSectionChart();
+            UpdateDataGridView(); // Ensure the main grid is also updated with section stats
         }
 
         private void UpdateDataGridView()
@@ -418,36 +562,36 @@ namespace TDM_IP_Tracker
             ColorRowBasedOnStatus(rowIndex, ipControl.LastStatus);
         }
 
-        private void UpdateSectionChart()
-        {
-            if (sectionChart == null) return;
+        //private void UpdateSectionChart()
+        //{
+        //    if (sectionChart == null) return;
 
-            var series = sectionChart.Series["Section Status"];
-            series.Points.Clear();
+        //    var series = sectionChart.Series["Section Status"];
+        //    series.Points.Clear();
 
-            foreach (var section in sectionStats.Keys.OrderBy(s => s))
-            {
-                int total = sectionIPs[section].Count;
-                int active = sectionStats[section];
+        //    foreach (var section in sectionStats.Keys.OrderBy(s => s))
+        //    {
+        //        int total = sectionIPs[section].Count;
+        //        int active = sectionStats[section];
 
-                var point = new DataPoint
-                {
-                    AxisLabel = section,
-                    YValues = new double[] { active },
-                    Label = $"{active}/{total}",
-                    Color = Color.FromArgb(76, 175, 80),
-                    LabelForeColor = Color.Black
-                };
+        //        var point = new DataPoint
+        //        {
+        //            AxisLabel = section,
+        //            YValues = new double[] { active },
+        //            Label = $"{active}/{total}",
+        //            Color = Color.FromArgb(76, 175, 80),
+        //            LabelForeColor = Color.Black
+        //        };
 
-                series.Points.Add(point);
-            }
+        //        series.Points.Add(point);
+        //    }
 
-            if (sectionChart.ChartAreas.Count > 0)
-            {
-                sectionChart.ChartAreas[0].AxisX.Interval = 1;
-                sectionChart.ChartAreas[0].AxisX.LabelStyle.Angle = -45;
-            }
-        }
+        //    if (sectionChart.ChartAreas.Count > 0)
+        //    {
+        //        sectionChart.ChartAreas[0].AxisX.Interval = 1;
+        //        sectionChart.ChartAreas[0].AxisX.LabelStyle.Angle = -45;
+        //    }
+        //}
 
         private void UpdateSectionGridView()
         {
