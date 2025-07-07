@@ -1,74 +1,90 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace TDM_IP_Tracker
 {
-    public class SettingsForm : Form
+    public partial class SettingsForm : Form
     {
-        private int _pingTimeout; // Backing field for PingTimeout
-        private int _maxConcurrentPings; // Backing field for MaxConcurrentPings
+        public int AutoCheckInterval { get; private set; }
+        public Color ThemeColor { get; private set; }
 
-        public int PingTimeout
+        public SettingsForm(int currentInterval, Color currentColor)
         {
-            get => _pingTimeout;
-            private set => _pingTimeout = value;
+           // InitializeComponent();
+            AutoCheckInterval = currentInterval;
+            ThemeColor = currentColor;
+            InitializeControls();
         }
 
-        public int MaxConcurrentPings
+        private void InitializeControls()
         {
-            get => _maxConcurrentPings;
-            private set => _maxConcurrentPings = value;
-        }
-
-        public SettingsForm(int currentTimeout, int currentConcurrency)
-        {
-            this.Text = "Ping Settings";
-            this.Size = new Size(350, 180);
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.Text = "Settings";
+            this.Size = new Size(400, 300);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.StartPosition = FormStartPosition.CenterParent;
 
-            Label lblTimeout = new Label() { Text = "Ping Timeout (ms):", Left = 20, Top = 20, AutoSize = true };
-            NumericUpDown numTimeout = new NumericUpDown()
+            Label lblInterval = new Label();
+            lblInterval.Text = "Auto-check interval (ms):";
+            lblInterval.Location = new Point(20, 20);
+            lblInterval.AutoSize = true;
+
+            NumericUpDown numInterval = new NumericUpDown();
+            numInterval.Minimum = 1000;
+            numInterval.Maximum = 60000;
+            numInterval.Increment = 1000;
+            numInterval.Value = AutoCheckInterval;
+            numInterval.Location = new Point(180, 20);
+            numInterval.Width = 150;
+
+            Label lblColor = new Label();
+            lblColor.Text = "Theme color:";
+            lblColor.Location = new Point(20, 60);
+            lblColor.AutoSize = true;
+
+            Button btnColor = new Button();
+            btnColor.Text = "Select Color";
+            btnColor.Location = new Point(180, 60);
+            btnColor.Width = 150;
+            btnColor.Click += (s, e) =>
             {
-                Minimum = 100,
-                Maximum = 10000,
-                Value = currentTimeout,
-                Increment = 100,
-                Left = 180,
-                Top = 18,
-                Width = 120
+                ColorDialog colorDialog = new ColorDialog();
+                colorDialog.Color = ThemeColor;
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ThemeColor = colorDialog.Color;
+                }
             };
 
-            Label lblConcurrency = new Label() { Text = "Max Concurrent Pings:", Left = 20, Top = 60, AutoSize = true };
-            NumericUpDown numConcurrency = new NumericUpDown()
+            Button btnOK = new Button();
+            btnOK.Text = "OK";
+            btnOK.DialogResult = DialogResult.OK;
+            btnOK.Location = new Point(120, 220);
+            btnOK.Width = 80;
+
+            Button btnCancel = new Button();
+            btnCancel.Text = "Cancel";
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new Point(220, 220);
+            btnCancel.Width = 80;
+
+            this.Controls.Add(lblInterval);
+            this.Controls.Add(numInterval);
+            this.Controls.Add(lblColor);
+            this.Controls.Add(btnColor);
+            this.Controls.Add(btnOK);
+            this.Controls.Add(btnCancel);
+
+            this.AcceptButton = btnOK;
+            this.CancelButton = btnCancel;
+
+            // Update properties when OK is clicked
+            btnOK.Click += (s, e) =>
             {
-                Minimum = 1,
-                Maximum = 100,
-                Value = currentConcurrency,
-                Left = 180,
-                Top = 58,
-                Width = 120
+                AutoCheckInterval = (int)numInterval.Value;
             };
-
-            Button btnOk = new Button() { Text = "OK", DialogResult = DialogResult.OK, Left = 180, Top = 100 };
-            Button btnCancel = new Button() { Text = "Cancel", DialogResult = DialogResult.Cancel, Left = 260, Top = 100 };
-
-            btnOk.Click += (s, e) =>
-            {
-                PingTimeout = (int)numTimeout.Value;
-                MaxConcurrentPings = (int)numConcurrency.Value;
-            };
-
-            Controls.AddRange(new Control[] { lblTimeout, numTimeout, lblConcurrency, numConcurrency, btnOk, btnCancel });
-
-            AcceptButton = btnOk;
-            CancelButton = btnCancel;
         }
     }
-
 }

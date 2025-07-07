@@ -1,4 +1,6 @@
-﻿namespace TDM_IP_Tracker
+﻿using System.Windows.Forms.DataVisualization.Charting;
+
+namespace TDM_IP_Tracker
 {
     partial class MassIPForm
     {
@@ -6,7 +8,12 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+     
+        private Chart sectionChart;
 
+        private DataGridView sectionGridView;
+  
+        // Add this to InitializeApplication()
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -26,7 +33,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        public void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
             panelIPContainer = new FlowLayoutPanel();
@@ -51,9 +58,34 @@
             titleLabel = new Label();
             panelTitle = new Panel();
             fadeTimer = new System.Windows.Forms.Timer(components);
+            splitContainerMain = new SplitContainer();
+            panelDashboard = new Panel();
+            panelStats = new Panel();
+            lblFailedIPs = new Label();
+            lblActiveIPs = new Label();
+            lblTotalIPs = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            label2 = new Label();
+            tabControl = new TabControl();
+            tabPageDashboard = new TabPage();
+            tabPageDetails = new TabPage();
+            dataGridViewDetails = new DataGridView();
+            btnExportPDF = new Button();
+            btnRefreshStats = new Button();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numColumns).BeginInit();
             panelTitle.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
+            splitContainerMain.Panel1.SuspendLayout();
+            splitContainerMain.Panel2.SuspendLayout();
+            splitContainerMain.SuspendLayout();
+            panelDashboard.SuspendLayout();
+            panelStats.SuspendLayout();
+            tabControl.SuspendLayout();
+            tabPageDashboard.SuspendLayout();
+            tabPageDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewDetails).BeginInit();
             SuspendLayout();
             // 
             // panelIPContainer
@@ -61,11 +93,11 @@
             panelIPContainer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panelIPContainer.AutoScroll = true;
             panelIPContainer.BackColor = Color.FromArgb(240, 240, 240);
-            panelIPContainer.Location = new Point(10, 90);
+            panelIPContainer.Location = new Point(7, 3);
             panelIPContainer.Margin = new Padding(0);
             panelIPContainer.Name = "panelIPContainer";
             panelIPContainer.Padding = new Padding(5);
-            panelIPContainer.Size = new Size(1004, 460);
+            panelIPContainer.Size = new Size(752, 422);
             panelIPContainer.TabIndex = 0;
             // 
             // btnLoadExcel
@@ -353,10 +385,197 @@
             fadeTimer.Interval = 10;
             fadeTimer.Tick += fadeTimer_Tick;
             // 
+            // splitContainerMain
+            // 
+            splitContainerMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            splitContainerMain.Location = new Point(0, 100);
+            splitContainerMain.Name = "splitContainerMain";
+            // 
+            // splitContainerMain.Panel1
+            // 
+            splitContainerMain.Panel1.Controls.Add(panelDashboard);
+            splitContainerMain.Panel1MinSize = 250;
+            // 
+            // splitContainerMain.Panel2
+            // 
+            splitContainerMain.Panel2.Controls.Add(tabControl);
+            splitContainerMain.Size = new Size(1024, 456);
+            splitContainerMain.SplitterDistance = 250;
+            splitContainerMain.TabIndex = 17;
+            // 
+            // panelDashboard
+            // 
+            panelDashboard.Controls.Add(panelStats);
+            panelDashboard.Dock = DockStyle.Fill;
+            panelDashboard.Location = new Point(0, 0);
+            panelDashboard.Name = "panelDashboard";
+            panelDashboard.Size = new Size(250, 456);
+            panelDashboard.TabIndex = 0;
+            // 
+            // panelStats
+            // 
+            panelStats.Controls.Add(lblFailedIPs);
+            panelStats.Controls.Add(lblActiveIPs);
+            panelStats.Controls.Add(lblTotalIPs);
+            panelStats.Controls.Add(label4);
+            panelStats.Controls.Add(label3);
+            panelStats.Controls.Add(label2);
+            panelStats.Dock = DockStyle.Top;
+            panelStats.Location = new Point(0, 0);
+            panelStats.Name = "panelStats";
+            panelStats.Size = new Size(250, 120);
+            panelStats.TabIndex = 0;
+            // 
+            // lblFailedIPs
+            // 
+            lblFailedIPs.AutoSize = true;
+            lblFailedIPs.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblFailedIPs.Location = new Point(150, 80);
+            lblFailedIPs.Name = "lblFailedIPs";
+            lblFailedIPs.Size = new Size(19, 21);
+            lblFailedIPs.TabIndex = 5;
+            lblFailedIPs.Text = "0";
+            // 
+            // lblActiveIPs
+            // 
+            lblActiveIPs.AutoSize = true;
+            lblActiveIPs.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblActiveIPs.Location = new Point(150, 50);
+            lblActiveIPs.Name = "lblActiveIPs";
+            lblActiveIPs.Size = new Size(19, 21);
+            lblActiveIPs.TabIndex = 4;
+            lblActiveIPs.Text = "0";
+            // 
+            // lblTotalIPs
+            // 
+            lblTotalIPs.AutoSize = true;
+            lblTotalIPs.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalIPs.Location = new Point(150, 20);
+            lblTotalIPs.Name = "lblTotalIPs";
+            lblTotalIPs.Size = new Size(19, 21);
+            lblTotalIPs.TabIndex = 3;
+            lblTotalIPs.Text = "0";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.Location = new Point(20, 80);
+            label4.Name = "label4";
+            label4.Size = new Size(65, 17);
+            label4.TabIndex = 2;
+            label4.Text = "Failed IPs:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Location = new Point(20, 50);
+            label3.Name = "label3";
+            label3.Size = new Size(65, 17);
+            label3.TabIndex = 1;
+            label3.Text = "Active IPs:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(20, 20);
+            label2.Name = "label2";
+            label2.Size = new Size(59, 17);
+            label2.TabIndex = 0;
+            label2.Text = "Total IPs:";
+            // 
+            // tabControl
+            // 
+            tabControl.Controls.Add(tabPageDashboard);
+            tabControl.Controls.Add(tabPageDetails);
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Location = new Point(0, 0);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(770, 456);
+            tabControl.TabIndex = 0;
+            // 
+            // tabPageDashboard
+            // 
+            tabPageDashboard.Controls.Add(panelIPContainer);
+            tabPageDashboard.Location = new Point(4, 24);
+            tabPageDashboard.Name = "tabPageDashboard";
+            tabPageDashboard.Padding = new Padding(3);
+            tabPageDashboard.Size = new Size(762, 428);
+            tabPageDashboard.TabIndex = 0;
+            tabPageDashboard.Text = "IP Dashboard";
+            tabPageDashboard.UseVisualStyleBackColor = true;
+            // 
+            // tabPageDetails
+            // 
+            tabPageDetails.Controls.Add(dataGridViewDetails);
+            tabPageDetails.Location = new Point(4, 24);
+            tabPageDetails.Name = "tabPageDetails";
+            tabPageDetails.Padding = new Padding(3);
+            tabPageDetails.Size = new Size(762, 428);
+            tabPageDetails.TabIndex = 1;
+            tabPageDetails.Text = "Detailed View";
+            tabPageDetails.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewDetails
+            // 
+            dataGridViewDetails.AllowUserToAddRows = false;
+            dataGridViewDetails.AllowUserToDeleteRows = false;
+            dataGridViewDetails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewDetails.Dock = DockStyle.Fill;
+            dataGridViewDetails.Location = new Point(0, 0);
+            dataGridViewDetails.Name = "dataGridViewDetails";
+            dataGridViewDetails.ReadOnly = true;
+            dataGridViewDetails.Size = new Size(240, 150);
+            dataGridViewDetails.TabIndex = 0;
+            // 
+            // btnExportPDF
+            // 
+            btnExportPDF.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnExportPDF.BackColor = Color.Transparent;
+            btnExportPDF.FlatAppearance.BorderSize = 0;
+            btnExportPDF.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 120, 215);
+            btnExportPDF.FlatAppearance.MouseOverBackColor = Color.FromArgb(200, 230, 250);
+            btnExportPDF.FlatStyle = FlatStyle.Flat;
+            btnExportPDF.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnExportPDF.ImageAlign = ContentAlignment.MiddleLeft;
+            btnExportPDF.Location = new Point(710, 52);
+            btnExportPDF.Name = "btnExportPDF";
+            btnExportPDF.Size = new Size(90, 30);
+            btnExportPDF.TabIndex = 18;
+            btnExportPDF.Text = "  Export PDF";
+            btnExportPDF.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnExportPDF.UseVisualStyleBackColor = false;
+            btnExportPDF.Click += btnExportPDF_Click;
+            // 
+            // btnRefreshStats
+            // 
+            btnRefreshStats.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRefreshStats.BackColor = Color.Transparent;
+            btnRefreshStats.FlatAppearance.BorderSize = 0;
+            btnRefreshStats.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 120, 215);
+            btnRefreshStats.FlatAppearance.MouseOverBackColor = Color.FromArgb(200, 230, 250);
+            btnRefreshStats.FlatStyle = FlatStyle.Flat;
+            btnRefreshStats.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRefreshStats.ImageAlign = ContentAlignment.MiddleLeft;
+            btnRefreshStats.Location = new Point(615, 52);
+            btnRefreshStats.Name = "btnRefreshStats";
+            btnRefreshStats.Size = new Size(90, 30);
+            btnRefreshStats.TabIndex = 19;
+            btnRefreshStats.Text = "  Refresh";
+            btnRefreshStats.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnRefreshStats.UseVisualStyleBackColor = false;
+            btnRefreshStats.Click += btnRefreshStats_Click;
+            // 
             // MassIPForm
             // 
             BackColor = Color.White;
             ClientSize = new Size(1024, 581);
+            Controls.Add(btnRefreshStats);
+            Controls.Add(btnExportPDF);
+            Controls.Add(splitContainerMain);
             Controls.Add(panelTitle);
             Controls.Add(label1);
             Controls.Add(numColumns);
@@ -372,7 +591,6 @@
             Controls.Add(btnSelectAll);
             Controls.Add(btnTrack);
             Controls.Add(btnLoadExcel);
-            Controls.Add(panelIPContainer);
             DoubleBuffered = true;
             Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             MinimumSize = new Size(800, 600);
@@ -385,37 +603,118 @@
             ((System.ComponentModel.ISupportInitialize)numColumns).EndInit();
             panelTitle.ResumeLayout(false);
             panelTitle.PerformLayout();
+            splitContainerMain.Panel1.ResumeLayout(false);
+            splitContainerMain.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
+            splitContainerMain.ResumeLayout(false);
+            panelDashboard.ResumeLayout(false);
+            panelStats.ResumeLayout(false);
+            panelStats.PerformLayout();
+            tabControl.ResumeLayout(false);
+            tabPageDashboard.ResumeLayout(false);
+            tabPageDetails.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewDetails).EndInit();
             ResumeLayout(false);
             PerformLayout();
+
+            // Create a new tab for section monitoring
+            InitializeSectionMonitoringTab();
         }
 
+        // Then in your initialization code:
+        private void InitializeSectionMonitoringTab()
+        {
+            TabPage tabPageSections = new TabPage("Section Monitoring");
+            tabControl.TabPages.Add(tabPageSections);
+
+            // Ensure the tab page has a minimum size
+            tabPageSections.MinimumSize = new Size(100, 100);
+
+            // Use a SplitContainer for better layout management
+            SplitContainer splitContainer = new SplitContainer();
+            splitContainer.Dock = DockStyle.Fill;
+            splitContainer.Orientation = Orientation.Vertical;
+            splitContainer.SplitterDistance = 70; // 70% for chart, 30% for grid
+
+            // Initialize and configure the chart
+            sectionChart = new Chart();
+            sectionChart.Dock = DockStyle.Fill;
+            sectionChart.MinimumSize = new Size(100, 100);
+
+            ChartArea chartArea = new ChartArea();
+            sectionChart.ChartAreas.Add(chartArea);
+
+            Series series = new Series("Section Status");
+            series.ChartType = SeriesChartType.Column;
+            series.IsValueShownAsLabel = true;
+            sectionChart.Series.Add(series);
+
+            sectionChart.Legends.Add(new Legend());
+
+ 
+            // In InitializeComponent()
+            sectionGridView = new DataGridView();
+            sectionGridView.Name = "sectionGridView";
+            sectionGridView.Dock = DockStyle.Fill;
+            sectionGridView.AutoGenerateColumns = false;
+
+            // Add columns
+            sectionGridView.Columns.Add("Section", "Section");
+            sectionGridView.Columns.Add("Count", "Count");
+            sectionGridView.Columns.Add("Status", "Status");
+            // Add controls to the split container
+            splitContainer.Panel1.Controls.Add(sectionChart);
+            splitContainer.Panel2.Controls.Add(sectionGridView);
+
+            // Add the split container to the tab page
+            tabPageSections.Controls.Add(splitContainer);
+
+            // Force a layout update
+            tabPageSections.PerformLayout();
+        }
         #endregion
 
-        private FlowLayoutPanel panelIPContainer;
-        private Button btnLoadExcel;
-        private Button btnTrack;
-        private Button btnSelectAll;
-        private Button btnDeselectAll;
-        private CheckBox chkAutoCheck;
-        private Button btnAddIP;
-        private Button btnRemoveIP;
-        private Button btnClear;
-        private Button btnExport;
-        private Button btnSettings;
-        private Button btnTheme;
-        private System.Windows.Forms.Timer autoTimer;
-        private StatusStrip statusStrip;
-        private ToolStripStatusLabel statusLabel;
-        private ToolStripProgressBar statusProgress;
-        private ToolTip toolTip;
-        private NumericUpDown numColumns;
-        private Label label1;
-        private Panel panelToolbar;
-        private Button btnMinimize;
-        private Button btnMaximize;
-        private Button btnClose;
-        private Label titleLabel;
-        private Panel panelTitle;
-        private System.Windows.Forms.Timer fadeTimer;
+        public FlowLayoutPanel panelIPContainer;
+        public Button btnLoadExcel;
+        public Button btnTrack;
+        public Button btnSelectAll;
+        public Button btnDeselectAll;
+        public CheckBox chkAutoCheck;
+        public Button btnAddIP;
+        public Button btnRemoveIP;
+        public Button btnClear;
+        public Button btnExport;
+        public Button btnSettings;
+        public Button btnTheme;
+        public System.Windows.Forms.Timer autoTimer;
+        public StatusStrip statusStrip;
+        public ToolStripStatusLabel statusLabel;
+        public ToolStripProgressBar statusProgress;
+        public ToolTip toolTip;
+        public NumericUpDown numColumns;
+        public Label label1;
+        public Panel panelToolbar;
+        public Button btnMinimize;
+        public Button btnMaximize;
+        public Button btnClose;
+        public Label titleLabel;
+        public Panel panelTitle;
+        public System.Windows.Forms.Timer fadeTimer;
+        public SplitContainer splitContainerMain;
+        public Panel panelDashboard;
+        public Panel panelStats;
+        public Label lblFailedIPs;
+        public Label lblActiveIPs;
+        public Label lblTotalIPs;
+        public Label label4;
+        public Label label3;
+        public Label label2;
+        public System.Windows.Forms.DataVisualization.Charting.Chart chartStatus;
+        public TabControl tabControl;
+        public TabPage tabPageDashboard;
+        public TabPage tabPageDetails;
+        public Button btnExportPDF;
+        public Button btnRefreshStats;
+        public System.Windows.Forms.DataGridView dataGridViewDetails;
     }
 }

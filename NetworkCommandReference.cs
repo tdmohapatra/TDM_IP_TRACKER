@@ -17,6 +17,12 @@ namespace TDM_IP_Tracker
 
         private void NetworkCommandReference_Load(object sender, EventArgs e)
         {
+            
+            
+            
+            
+            
+            
             cmbCommands.SelectedIndex = 0;
         }
 
