@@ -108,11 +108,12 @@ namespace TDM_IP_Tracker
             btnLoadExcel.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 120, 215);
             btnLoadExcel.FlatAppearance.MouseOverBackColor = Color.FromArgb(200, 230, 250);
             btnLoadExcel.FlatStyle = FlatStyle.Flat;
-            btnLoadExcel.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLoadExcel.Font = new Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnLoadExcel.ForeColor = SystemColors.ActiveCaptionText;
             btnLoadExcel.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLoadExcel.Location = new Point(10, 50);
+            btnLoadExcel.Location = new Point(0, 33);
             btnLoadExcel.Name = "btnLoadExcel";
-            btnLoadExcel.Size = new Size(110, 30);
+            btnLoadExcel.Size = new Size(144, 65);
             btnLoadExcel.TabIndex = 1;
             btnLoadExcel.Text = "  Load Excel";
             btnLoadExcel.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -127,11 +128,12 @@ namespace TDM_IP_Tracker
             btnTrack.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 120, 215);
             btnTrack.FlatAppearance.MouseOverBackColor = Color.FromArgb(200, 230, 250);
             btnTrack.FlatStyle = FlatStyle.Flat;
-            btnTrack.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnTrack.Font = new Font("Showcard Gothic", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnTrack.ForeColor = Color.MidnightBlue;
             btnTrack.ImageAlign = ContentAlignment.MiddleLeft;
-            btnTrack.Location = new Point(125, 50);
+            btnTrack.Location = new Point(150, 34);
             btnTrack.Name = "btnTrack";
-            btnTrack.Size = new Size(90, 30);
+            btnTrack.Size = new Size(90, 65);
             btnTrack.TabIndex = 2;
             btnTrack.Text = "  Track";
             btnTrack.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -148,9 +150,9 @@ namespace TDM_IP_Tracker
             btnSelectAll.FlatStyle = FlatStyle.Flat;
             btnSelectAll.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnSelectAll.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSelectAll.Location = new Point(231, 44);
+            btnSelectAll.Location = new Point(246, 35);
             btnSelectAll.Name = "btnSelectAll";
-            btnSelectAll.Size = new Size(100, 21);
+            btnSelectAll.Size = new Size(100, 27);
             btnSelectAll.TabIndex = 3;
             btnSelectAll.Text = "  Select All";
             btnSelectAll.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -167,9 +169,9 @@ namespace TDM_IP_Tracker
             btnDeselectAll.FlatStyle = FlatStyle.Flat;
             btnDeselectAll.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnDeselectAll.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDeselectAll.Location = new Point(221, 65);
+            btnDeselectAll.Location = new Point(246, 68);
             btnDeselectAll.Name = "btnDeselectAll";
-            btnDeselectAll.Size = new Size(110, 20);
+            btnDeselectAll.Size = new Size(110, 29);
             btnDeselectAll.TabIndex = 4;
             btnDeselectAll.Text = "  Deselect All";
             btnDeselectAll.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -188,9 +190,9 @@ namespace TDM_IP_Tracker
             chkAutoCheck.FlatStyle = FlatStyle.Flat;
             chkAutoCheck.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkAutoCheck.ImageAlign = ContentAlignment.MiddleLeft;
-            chkAutoCheck.Location = new Point(824, 51);
+            chkAutoCheck.Location = new Point(790, 39);
             chkAutoCheck.Name = "chkAutoCheck";
-            chkAutoCheck.Size = new Size(110, 30);
+            chkAutoCheck.Size = new Size(85, 58);
             chkAutoCheck.TabIndex = 5;
             chkAutoCheck.Text = "  Auto Check";
             chkAutoCheck.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -207,9 +209,9 @@ namespace TDM_IP_Tracker
             btnAddIP.FlatStyle = FlatStyle.Flat;
             btnAddIP.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAddIP.ImageAlign = ContentAlignment.MiddleLeft;
-            btnAddIP.Location = new Point(337, 50);
+            btnAddIP.Location = new Point(362, 29);
             btnAddIP.Name = "btnAddIP";
-            btnAddIP.Size = new Size(90, 30);
+            btnAddIP.Size = new Size(90, 65);
             btnAddIP.TabIndex = 6;
             btnAddIP.Text = "  Add IP";
             btnAddIP.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -226,9 +228,9 @@ namespace TDM_IP_Tracker
             btnRemoveIP.FlatStyle = FlatStyle.Flat;
             btnRemoveIP.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnRemoveIP.ImageAlign = ContentAlignment.MiddleLeft;
-            btnRemoveIP.Location = new Point(433, 50);
+            btnRemoveIP.Location = new Point(458, 33);
             btnRemoveIP.Name = "btnRemoveIP";
-            btnRemoveIP.Size = new Size(100, 30);
+            btnRemoveIP.Size = new Size(75, 62);
             btnRemoveIP.TabIndex = 7;
             btnRemoveIP.Text = "  Remove IP";
             btnRemoveIP.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -245,9 +247,9 @@ namespace TDM_IP_Tracker
             btnClear.FlatStyle = FlatStyle.Flat;
             btnClear.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnClear.ImageAlign = ContentAlignment.MiddleLeft;
-            btnClear.Location = new Point(530, 50);
+            btnClear.Location = new Point(539, 35);
             btnClear.Name = "btnClear";
-            btnClear.Size = new Size(90, 30);
+            btnClear.Size = new Size(77, 62);
             btnClear.TabIndex = 8;
             btnClear.Text = "  Clear All";
             btnClear.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -264,7 +266,7 @@ namespace TDM_IP_Tracker
             btnExport.FlatStyle = FlatStyle.Flat;
             btnExport.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnExport.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExport.Location = new Point(615, 52);
+            btnExport.Location = new Point(707, 35);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(90, 30);
             btnExport.TabIndex = 9;
@@ -283,10 +285,11 @@ namespace TDM_IP_Tracker
             btnSettings.FlatStyle = FlatStyle.Flat;
             btnSettings.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnSettings.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSettings.Location = new Point(742, 52);
+            btnSettings.Location = new Point(995, 67);
             btnSettings.Name = "btnSettings";
             btnSettings.Size = new Size(31, 26);
             btnSettings.TabIndex = 10;
+            btnSettings.Text = "S";
             btnSettings.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnSettings.UseVisualStyleBackColor = false;
             btnSettings.Click += btnSettings_Click;
@@ -301,10 +304,11 @@ namespace TDM_IP_Tracker
             btnTheme.FlatStyle = FlatStyle.Flat;
             btnTheme.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnTheme.ImageAlign = ContentAlignment.MiddleLeft;
-            btnTheme.Location = new Point(789, 52);
+            btnTheme.Location = new Point(995, 33);
             btnTheme.Name = "btnTheme";
             btnTheme.Size = new Size(29, 28);
             btnTheme.TabIndex = 11;
+            btnTheme.Text = "T";
             btnTheme.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnTheme.UseVisualStyleBackColor = false;
             btnTheme.Click += btnTheme_Click;
@@ -332,15 +336,17 @@ namespace TDM_IP_Tracker
             // 
             // statusProgress
             // 
+            statusProgress.ForeColor = Color.DarkViolet;
             statusProgress.Name = "statusProgress";
             statusProgress.Size = new Size(100, 16);
+            statusProgress.Click += statusProgress_Click;
             // 
             // numColumns
             // 
             numColumns.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             numColumns.BackColor = Color.White;
             numColumns.BorderStyle = BorderStyle.None;
-            numColumns.Location = new Point(940, 59);
+            numColumns.Location = new Point(909, 46);
             numColumns.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numColumns.Name = "numColumns";
             numColumns.Size = new Size(53, 19);
@@ -353,7 +359,7 @@ namespace TDM_IP_Tracker
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
-            label1.Location = new Point(940, 74);
+            label1.Location = new Point(909, 75);
             label1.Name = "label1";
             label1.Size = new Size(55, 15);
             label1.TabIndex = 14;
@@ -411,6 +417,7 @@ namespace TDM_IP_Tracker
             panelDashboard.Name = "panelDashboard";
             panelDashboard.Size = new Size(250, 456);
             panelDashboard.TabIndex = 0;
+            panelDashboard.Paint += panelDashboard_Paint;
             // 
             // panelStats
             // 
@@ -423,7 +430,7 @@ namespace TDM_IP_Tracker
             panelStats.Dock = DockStyle.Top;
             panelStats.Location = new Point(0, 0);
             panelStats.Name = "panelStats";
-            panelStats.Size = new Size(250, 120);
+            panelStats.Size = new Size(250, 140);
             panelStats.TabIndex = 0;
             // 
             // lblFailedIPs
@@ -525,10 +532,10 @@ namespace TDM_IP_Tracker
             dataGridViewDetails.AllowUserToDeleteRows = false;
             dataGridViewDetails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewDetails.Dock = DockStyle.Fill;
-            dataGridViewDetails.Location = new Point(0, 0);
+            dataGridViewDetails.Location = new Point(3, 3);
             dataGridViewDetails.Name = "dataGridViewDetails";
             dataGridViewDetails.ReadOnly = true;
-            dataGridViewDetails.Size = new Size(240, 150);
+            dataGridViewDetails.Size = new Size(756, 422);
             dataGridViewDetails.TabIndex = 0;
             // 
             // btnExportPDF
@@ -541,9 +548,9 @@ namespace TDM_IP_Tracker
             btnExportPDF.FlatStyle = FlatStyle.Flat;
             btnExportPDF.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnExportPDF.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExportPDF.Location = new Point(710, 52);
+            btnExportPDF.Location = new Point(707, 69);
             btnExportPDF.Name = "btnExportPDF";
-            btnExportPDF.Size = new Size(90, 30);
+            btnExportPDF.Size = new Size(90, 28);
             btnExportPDF.TabIndex = 18;
             btnExportPDF.Text = "  Export PDF";
             btnExportPDF.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -560,9 +567,9 @@ namespace TDM_IP_Tracker
             btnRefreshStats.FlatStyle = FlatStyle.Flat;
             btnRefreshStats.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnRefreshStats.ImageAlign = ContentAlignment.MiddleLeft;
-            btnRefreshStats.Location = new Point(615, 52);
+            btnRefreshStats.Location = new Point(622, 36);
             btnRefreshStats.Name = "btnRefreshStats";
-            btnRefreshStats.Size = new Size(90, 30);
+            btnRefreshStats.Size = new Size(79, 61);
             btnRefreshStats.TabIndex = 19;
             btnRefreshStats.Text = "  Refresh";
             btnRefreshStats.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -618,11 +625,11 @@ namespace TDM_IP_Tracker
             PerformLayout();
 
             // Create a new tab for section monitoring
-          
+
         }
 
         // Then in your initialization code:
-   
+
         #endregion
 
         public FlowLayoutPanel panelIPContainer;

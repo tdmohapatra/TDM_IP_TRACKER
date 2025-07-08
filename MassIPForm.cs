@@ -31,6 +31,10 @@ namespace TDM_IP_Tracker
         private System.Timers.Timer statsRefreshTimer;
         private Color currentThemeColor = Color.FromArgb(0, 120, 215);
 
+        private readonly object sectionStatsLock = new object();
+        private readonly object sectionIPsLock = new object();
+        private readonly object _sectionLock = new object();
+
         #region Initialization
 
         public MassIPForm()
@@ -58,7 +62,7 @@ namespace TDM_IP_Tracker
             dataGridViewDetails.Columns.Add("LastChecked", "Last Checked");
             dataGridViewDetails.Columns.Add("HostName", "Host Name");
         }
-             private void InitializeSectionMonitoringTab()
+        private void InitializeSectionMonitoringTab()
         {
             TabPage tabPageSections = new TabPage("Section Monitoring");
             tabControl.TabPages.Add(tabPageSections);
@@ -87,7 +91,7 @@ namespace TDM_IP_Tracker
 
             sectionChart.Legends.Add(new Legend());
 
- 
+
             // In InitializeComponent()
             sectionGridView = new DataGridView();
             sectionGridView.Name = "sectionGridView";
@@ -115,10 +119,28 @@ namespace TDM_IP_Tracker
             var series = sectionChart.Series["Section Status"];
             series.Points.Clear();
 
-            foreach (var section in sectionStats.Keys.OrderBy(s => s))
+            List<string> sections;
+            Dictionary<string, int> statsSnapshot;
+            Dictionary<string, List<IPControl>> ipsSnapshot;
+
+            lock (sectionStatsLock)
             {
-                int total = sectionIPs[section].Count;
-                int active = sectionStats[section];
+                statsSnapshot = new Dictionary<string, int>(sectionStats);
+                sections = statsSnapshot.Keys.OrderBy(s => s).ToList();
+            }
+
+            lock (sectionIPsLock)
+            {
+                ipsSnapshot = new Dictionary<string, List<IPControl>>(sectionIPs);
+            }
+
+            foreach (var section in sections)
+            {
+                if (!ipsSnapshot.TryGetValue(section, out var ipList))
+                    continue;
+
+                int total = ipList.Count;
+                int active = statsSnapshot[section];
 
                 var point = new DataPoint
                 {
@@ -136,18 +158,15 @@ namespace TDM_IP_Tracker
             {
                 var area = sectionChart.ChartAreas[0];
 
-                // Improve spacing and make chart full-width
                 area.AxisX.Interval = 1;
                 area.AxisX.LabelStyle.Angle = -45;
 
-                // Remove extra margins
                 area.Position.Auto = false;
                 area.Position.X = 0;
                 area.Position.Y = 0;
                 area.Position.Width = 100;
                 area.Position.Height = 100;
 
-                // Tighten inner plot margins
                 area.InnerPlotPosition.Auto = false;
                 area.InnerPlotPosition.X = 5;
                 area.InnerPlotPosition.Y = 5;
@@ -155,6 +174,7 @@ namespace TDM_IP_Tracker
                 area.InnerPlotPosition.Height = 90;
             }
         }
+
 
         private void UpdateChartBySection()
         {
@@ -305,21 +325,31 @@ namespace TDM_IP_Tracker
                     UpdateSectionStats();
                     UpdateStatus($"Loaded IPs from {Path.GetFileName(filePath)}");
                 }
-               
-         
-            finally
-            {
-                panelIPContainer.ResumeLayout();
-            }
+
+
+                finally
+                {
+                    panelIPContainer.ResumeLayout();
+                }
             }
         }
 
         private void ClearExistingIPs()
         {
             panelIPContainer.Controls.Clear();
+
+            lock (sectionIPsLock)
+            {
+                sectionIPs.Clear();
+            }
+            lock (sectionStatsLock)
+            {
+                sectionStats.Clear();
+            }
+
             ipControls.Clear();
-            sectionIPs.Clear();
         }
+
 
         private void LoadIPsFromWorksheet(ExcelWorksheet worksheet)
         {
@@ -379,23 +409,39 @@ namespace TDM_IP_Tracker
             sectionIPs[section].Add(ipControl);
         }
 
-        private void TrackAllIPs()
+        //private void TrackAllIPs()
+        //{
+        //    if (!ValidateIPsToTrack()) return;
+
+        //    PrepareForTracking();
+
+        //    Task.Run(() =>
+        //    {
+        //        //TrackIPsInParallel();
+
+        //        TrackIPsAsync();
+        //        //CompleteTracking();
+
+        //    });
+        //  //  CompleteTracking();
+        //    UpdateChartBySection();
+        //}
+
+        private async void TrackAllIPs()
         {
             if (!ValidateIPsToTrack()) return;
 
             PrepareForTracking();
 
-            Task.Run(() =>
+            await Task.Run(async () =>
             {
-                //TrackIPsInParallel();
-
-                TrackIPsAsync();
-                //CompleteTracking();
-               
+                await TrackIPsAsync(); // properly awaited
             });
-            CompleteTracking();
-             UpdateChartBySection();
+
+            CompleteTracking();         // only called after tracking finishes
+            UpdateChartBySection();     // safe to update chart now
         }
+
 
         private bool ValidateIPsToTrack()
         {
@@ -409,10 +455,17 @@ namespace TDM_IP_Tracker
 
         private void PrepareForTracking()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(PrepareForTracking));
+                return;
+            }
+
             statusProgress.Style = ProgressBarStyle.Marquee;
             UpdateStatus("Tracking IPs...");
             btnTrack.Enabled = false;
         }
+
         private async Task TrackIPsAsync()
         {
             var ipsToTrack = ipControls.Where(ip => ip.Checked || !chkAutoCheck.Checked).ToList();
@@ -505,8 +558,24 @@ namespace TDM_IP_Tracker
 
         #region UI Updates
 
+        //private void UpdateStats()
+        //{
+        //    int total = ipControls.Count;
+        //    int active = ipControls.Count(ip => ip.LastStatus == IPStatus.Success);
+        //    int failed = total - active;
+
+        //    UpdateStatsLabels(total, active, failed);
+        //    UpdateChart(active, failed);
+        //}
+
         private void UpdateStats()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(UpdateStats));
+                return;
+            }
+
             int total = ipControls.Count;
             int active = ipControls.Count(ip => ip.LastStatus == IPStatus.Success);
             int failed = total - active;
@@ -515,20 +584,46 @@ namespace TDM_IP_Tracker
             UpdateChart(active, failed);
         }
 
+
         private void UpdateSectionStats()
         {
-            sectionStats.Clear();
-
-            foreach (var section in sectionIPs.Keys)
+            lock (sectionStatsLock)
             {
-                int active = sectionIPs[section].Count(ip => ip.LastStatus == IPStatus.Success);
-                sectionStats[section] = active;
+                sectionStats.Clear();
+
+                lock (sectionIPsLock)
+                {
+                    foreach (var section in sectionIPs.Keys)
+                    {
+                        int active = sectionIPs[section].Count(ip => ip.LastStatus == IPStatus.Success);
+                        sectionStats[section] = active;
+                    }
+                }
             }
 
             UpdateSectionGridView();
             UpdateSectionChart();
-            UpdateDataGridView(); // Ensure the main grid is also updated with section stats
         }
+
+
+        //private void UpdateDataGridView()
+        //{
+        //    if (dataGridViewDetails.InvokeRequired)
+        //    {
+        //        dataGridViewDetails.Invoke(new Action(UpdateDataGridView));
+        //        return;
+        //    }
+
+        //    dataGridViewDetails.SuspendLayout();
+        //    dataGridViewDetails.Rows.Clear();
+
+        //    foreach (var ipControl in ipControls)
+        //    {
+        //        AddIPControlToGridView(ipControl);
+        //    }
+
+        //    dataGridViewDetails.ResumeLayout();
+        //}
 
         private void UpdateDataGridView()
         {
@@ -546,8 +641,9 @@ namespace TDM_IP_Tracker
                 AddIPControlToGridView(ipControl);
             }
 
-            dataGridViewDetails.ResumeLayout();
+            dataGridViewDetails.ResumeLayout(true);
         }
+
 
         private void AddIPControlToGridView(IPControl ipControl)
         {
@@ -562,35 +658,26 @@ namespace TDM_IP_Tracker
             ColorRowBasedOnStatus(rowIndex, ipControl.LastStatus);
         }
 
-        //private void UpdateSectionChart()
+        //private void UpdateSectionGridView()
         //{
-        //    if (sectionChart == null) return;
+        //    var grid = GetSectionGridView();
+        //    if (grid == null) return;
 
-        //    var series = sectionChart.Series["Section Status"];
-        //    series.Points.Clear();
+        //    if (grid.InvokeRequired)
+        //    {
+        //        grid.Invoke(new Action(UpdateSectionGridView));
+        //        return;
+        //    }
+
+        //    grid.SuspendLayout();
+        //    grid.Rows.Clear();
 
         //    foreach (var section in sectionStats.Keys.OrderBy(s => s))
         //    {
-        //        int total = sectionIPs[section].Count;
-        //        int active = sectionStats[section];
-
-        //        var point = new DataPoint
-        //        {
-        //            AxisLabel = section,
-        //            YValues = new double[] { active },
-        //            Label = $"{active}/{total}",
-        //            Color = Color.FromArgb(76, 175, 80),
-        //            LabelForeColor = Color.Black
-        //        };
-
-        //        series.Points.Add(point);
+        //        AddSectionToGridView(grid, section);
         //    }
 
-        //    if (sectionChart.ChartAreas.Count > 0)
-        //    {
-        //        sectionChart.ChartAreas[0].AxisX.Interval = 1;
-        //        sectionChart.ChartAreas[0].AxisX.LabelStyle.Angle = -45;
-        //    }
+        //    grid.ResumeLayout();
         //}
 
         private void UpdateSectionGridView()
@@ -598,16 +685,29 @@ namespace TDM_IP_Tracker
             var grid = GetSectionGridView();
             if (grid == null) return;
 
+            if (grid.InvokeRequired)
+            {
+                grid.Invoke(new Action(UpdateSectionGridView));
+                return;
+            }
+
             grid.SuspendLayout();
             grid.Rows.Clear();
 
-            foreach (var section in sectionStats.Keys.OrderBy(s => s))
+            List<string> sections;
+            lock (sectionStatsLock)
+            {
+                sections = sectionStats.Keys.OrderBy(s => s).ToList();
+            }
+
+            foreach (var section in sections)
             {
                 AddSectionToGridView(grid, section);
             }
 
             grid.ResumeLayout();
         }
+
 
         private DataGridView GetSectionGridView()
         {
@@ -627,10 +727,36 @@ namespace TDM_IP_Tracker
         }
 
 
+        //private void AddSectionToGridView(DataGridView grid, string section)
+        //{
+        //    int total = sectionIPs[section].Count;
+        //    int active = sectionStats[section];
+        //    int inactive = total - active;
+
+        //    int rowIndex = grid.Rows.Add(
+        //        section,
+        //        total,
+        //        active,
+        //        inactive,
+        //        $"{Math.Round((double)active / total * 100, 2)}%"
+        //    );
+
+        //    FormatSectionGridRow(grid, rowIndex, inactive, total);
+        //}
+
+
         private void AddSectionToGridView(DataGridView grid, string section)
         {
-            int total = sectionIPs[section].Count;
-            int active = sectionStats[section];
+            int total, active;
+
+            lock (_sectionLock)
+            {
+                if (!sectionIPs.TryGetValue(section, out var ipList) || !sectionStats.TryGetValue(section, out active))
+                    return;
+
+                total = ipList.Count;
+            }
+
             int inactive = total - active;
 
             int rowIndex = grid.Rows.Add(
@@ -638,7 +764,7 @@ namespace TDM_IP_Tracker
                 total,
                 active,
                 inactive,
-                $"{Math.Round((double)active / total * 100, 2)}%"
+                total > 0 ? $"{Math.Round((double)active / total * 100, 2)}%" : "0%"
             );
 
             FormatSectionGridRow(grid, rowIndex, inactive, total);
@@ -917,11 +1043,12 @@ namespace TDM_IP_Tracker
             }
 
             statusProgress.Style = ProgressBarStyle.Continuous;
-            statusProgress.Value = 0;
+            statusProgress.Value = statusProgress.Maximum; // Show progress is 100%
             UpdateStatus("Tracking completed");
             btnTrack.Enabled = true;
             UpdateDataGridView();
         }
+
 
         private void UpdateProgressBar(int value)
         {
@@ -931,8 +1058,40 @@ namespace TDM_IP_Tracker
                 return;
             }
 
-            statusProgress.Value = Math.Min(100, Math.Max(0, value));
+            // Only update if not in Marquee mode
+            if (statusProgress.Style != ProgressBarStyle.Marquee)
+            {
+                value = Math.Min(statusProgress.Maximum, Math.Max(statusProgress.Minimum, value));
+
+                // Show the progress bar if hidden
+                if (!statusProgress.Visible)
+                    statusProgress.Visible = true;
+
+                statusProgress.Value = value;
+
+                // Optional: Update a status label too
+                statusLabel.Text = $"Progress: {value}%";
+
+                // Optional: auto-hide and reset after reaching 100%
+                if (value >= statusProgress.Maximum)
+                {
+                    Task.Delay(1000).ContinueWith(_ =>
+                    {
+                        if (!IsDisposed)
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                statusProgress.Visible = false;
+                                statusProgress.Value = 0;
+                                statusLabel.Text = "Completed";
+                            }));
+                        }
+                    });
+                }
+            }
         }
+
+
 
         private void UpdateStatus(string message)
         {
@@ -1020,6 +1179,16 @@ namespace TDM_IP_Tracker
         }
 
         #endregion
+
+        private void statusProgress_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelDashboard_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 
     // Theme classes
