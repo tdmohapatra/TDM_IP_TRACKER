@@ -77,6 +77,7 @@
             statusStrip = new StatusStrip();
             toolStripStatusLabel = new ToolStripStatusLabel();
             progressBar = new ProgressBar();
+            btnStopAction = new Button();
             statusStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -195,15 +196,7 @@
             txtGeoLocation.ScrollBars = ScrollBars.Vertical;
             txtGeoLocation.Size = new Size(470, 80);
             txtGeoLocation.TabIndex = 9;
-
-            ///
-
-            btnStopAction = new Button();
-            btnStopAction.Location = new Point(380, 12);
-            btnStopAction.Name = "btnStopAction";
-            btnStopAction.Size = new Size(100, 25);
-            btnStopAction.Text = "Stop";
-            Controls.Add(btnStopAction);
+            txtGeoLocation.Click += txtGeoLocation_Click;
             // 
             // statusStrip
             // 
@@ -227,11 +220,20 @@
             progressBar.Style = ProgressBarStyle.Continuous;
             progressBar.TabIndex = 11;
             // 
+            // btnStopAction
+            // 
+            btnStopAction.Location = new Point(380, 12);
+            btnStopAction.Name = "btnStopAction";
+            btnStopAction.Size = new Size(100, 25);
+            btnStopAction.TabIndex = 0;
+            btnStopAction.Text = "Stop";
+            // 
             // PingTestForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(804, 457);
+            Controls.Add(btnStopAction);
             Controls.Add(txtTarget);
             Controls.Add(btnStartPing);
             Controls.Add(lvPingResults);

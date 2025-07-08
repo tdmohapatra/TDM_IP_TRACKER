@@ -6,25 +6,24 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>false</UseWPF>
 	</PropertyGroup>
 
 	<ItemGroup>
-	
 		<PackageReference Include="ClosedXML" Version="0.105.0" />
-	
 		<PackageReference Include="LiveCharts.WinForms" Version="0.9.7.1" />
-		<PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-	
+		<!-- Removed LiveCharts.Wpf to prevent WindowsBase conflicts -->
 		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
 		<PackageReference Include="Microsoft.Office.Interop.Outlook" Version="15.0.4797.1004" />
 		<PackageReference Include="Microsoft.Office.Interop.Word" Version="15.0.4797.1004" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3351.48" />
 		<PackageReference Include="PacketDotNet" Version="1.4.8" />
 		<PackageReference Include="SharpPcap" Version="6.3.1" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
 		<PackageReference Include="System.Management" Version="9.0.6" />
-		<PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />	
-	
+		<PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="EPPlus" Version="4.5.3.2" />
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.73.1" />
@@ -44,6 +43,5 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-
 
 </Project>

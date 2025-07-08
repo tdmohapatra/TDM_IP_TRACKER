@@ -305,5 +305,31 @@ namespace TDM_IP_Tracker
             // Show the form
             packetTrackerFrm.Show();
         }
+
+        private void myMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MyMap MyMapForm = new MyMap();
+
+            // Show the form
+            MyMapForm.Show();
+        }
+
+        private void gOOGLEMAPToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            GoogleMapPage MyGoogleForm = new GoogleMapPage();
+
+            // Show the form
+            MyGoogleForm.Show();
+
+        }
+
+        private void sTREETMAPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenStreetMapPage OpenStreetForm = new OpenStreetMapPage();
+
+            // Show the form
+            OpenStreetForm.Show();
+
+        }
     }
 }

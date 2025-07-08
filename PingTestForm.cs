@@ -18,6 +18,8 @@ namespace TDM_IP_Tracker
     {
         private CancellationTokenSource _cts;
         private static readonly HttpClient _httpClient = new HttpClient();
+        private double? lastLatitude;
+        private double? lastLongitude;
 
         public PingTestForm()
         {
@@ -442,12 +444,46 @@ namespace TDM_IP_Tracker
 
 
 
+        //private async Task GetGeoLocation(string ip, CancellationToken token)
+        //{
+        //    try
+        //    {
+        //        toolStripStatusLabel.Text = $"Getting geolocation for {ip}...";
+        //        string url = $"https://ipinfo.io/{ip}/json";
+        //        using var response = await _httpClient.GetAsync(url, token).ConfigureAwait(false);
+        //        response.EnsureSuccessStatusCode();
+
+        //        using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+        //        using var json = await JsonDocument.ParseAsync(stream, cancellationToken: token).ConfigureAwait(false);
+
+        //        var sb = new StringBuilder();
+        //        if (json.RootElement.TryGetProperty("city", out var city)) sb.AppendLine("City: " + city.GetString());
+        //        if (json.RootElement.TryGetProperty("region", out var region)) sb.AppendLine("Region: " + region.GetString());
+        //        if (json.RootElement.TryGetProperty("country", out var country)) sb.AppendLine("Country: " + country.GetString());
+        //        if (json.RootElement.TryGetProperty("org", out var org)) sb.AppendLine("Org: " + org.GetString());
+        //        if (json.RootElement.TryGetProperty("loc", out var loc)) sb.AppendLine("Coords: " + loc.GetString());
+
+        //        InvokeIfRequired(() => txtGeoLocation.Text = sb.ToString());
+        //        toolStripStatusLabel.Text = "Geolocation fetched.";
+        //    }
+        //    catch (OperationCanceledException)
+        //    {
+        //        toolStripStatusLabel.Text = "Geolocation cancelled.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        InvokeIfRequired(() => txtGeoLocation.Text = "Error: " + ex.Message);
+        //        toolStripStatusLabel.Text = "Geolocation failed.";
+        //    }
+        //}
+
         private async Task GetGeoLocation(string ip, CancellationToken token)
         {
             try
             {
                 toolStripStatusLabel.Text = $"Getting geolocation for {ip}...";
                 string url = $"https://ipinfo.io/{ip}/json";
+
                 using var response = await _httpClient.GetAsync(url, token).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
@@ -455,12 +491,34 @@ namespace TDM_IP_Tracker
                 using var json = await JsonDocument.ParseAsync(stream, cancellationToken: token).ConfigureAwait(false);
 
                 var sb = new StringBuilder();
-                if (json.RootElement.TryGetProperty("city", out var city)) sb.AppendLine("City: " + city.GetString());
-                if (json.RootElement.TryGetProperty("region", out var region)) sb.AppendLine("Region: " + region.GetString());
-                if (json.RootElement.TryGetProperty("country", out var country)) sb.AppendLine("Country: " + country.GetString());
-                if (json.RootElement.TryGetProperty("org", out var org)) sb.AppendLine("Org: " + org.GetString());
-                if (json.RootElement.TryGetProperty("loc", out var loc)) sb.AppendLine("Coords: " + loc.GetString());
+                double latitude = 0;
+                double longitude = 0;
 
+                if (json.RootElement.TryGetProperty("city", out var city))
+                    sb.AppendLine("City: " + city.GetString());
+                if (json.RootElement.TryGetProperty("region", out var region))
+                    sb.AppendLine("Region: " + region.GetString());
+                if (json.RootElement.TryGetProperty("country", out var country))
+                    sb.AppendLine("Country: " + country.GetString());
+                if (json.RootElement.TryGetProperty("org", out var org))
+                    sb.AppendLine("Org: " + org.GetString());
+                if (json.RootElement.TryGetProperty("loc", out var loc))
+                {
+                    string locStr = loc.GetString(); // Format: "lat,lon"
+                    sb.AppendLine("Coords: " + locStr);
+
+                    var parts = locStr?.Split(',');
+                    if (parts != null && parts.Length == 2 &&
+                        double.TryParse(parts[0], out double lat) &&
+                        double.TryParse(parts[1], out double lon))
+                    {
+                        lastLatitude = lat;
+                        lastLongitude = lon;
+                    }
+                }
+
+
+                // Show in UI
                 InvokeIfRequired(() => txtGeoLocation.Text = sb.ToString());
                 toolStripStatusLabel.Text = "Geolocation fetched.";
             }
@@ -475,38 +533,6 @@ namespace TDM_IP_Tracker
             }
         }
 
-        //private async Task GetGeoLocation(string ip)
-        //{
-        //    try
-        //    {
-        //        toolStripStatusLabel.Text = $"Getting geolocation for {ip}...";
-        //        string url = $"https://ipinfo.io/{ip}/json";
-
-        //        using var client = new System.Net.Http.HttpClient();
-        //        var response = await client.GetStringAsync(url);
-        //        var json = JsonDocument.Parse(response);
-
-        //        var sb = new StringBuilder();
-        //        if (json.RootElement.TryGetProperty("city", out var city))
-        //            sb.AppendLine("City: " + city.GetString());
-        //        if (json.RootElement.TryGetProperty("region", out var region))
-        //            sb.AppendLine("Region: " + region.GetString());
-        //        if (json.RootElement.TryGetProperty("country", out var country))
-        //            sb.AppendLine("Country: " + country.GetString());
-        //        if (json.RootElement.TryGetProperty("org", out var org))
-        //            sb.AppendLine("Org: " + org.GetString());
-        //        if (json.RootElement.TryGetProperty("loc", out var loc))
-        //            sb.AppendLine("Coordinates: " + loc.GetString());
-
-        //        txtGeoLocation.Text = sb.ToString();
-        //        toolStripStatusLabel.Text = "Geolocation fetched.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        txtGeoLocation.Text = "Failed to get geolocation: " + ex.Message;
-        //        toolStripStatusLabel.Text = "Geolocation failed.";
-        //    }
-        //}
 
         private void DisableButtonsForOperation()
         {
@@ -542,5 +568,19 @@ namespace TDM_IP_Tracker
             else
                 action();
         }
+        private void txtGeoLocation_Click(object sender, EventArgs e)
+        {
+            if (lastLatitude.HasValue && lastLongitude.HasValue)
+            {
+                var mapForm = new MyMap();
+                mapForm.Show();
+                mapForm.AddMapMarker(lastLatitude.Value, lastLongitude.Value, "Location from IP");
+            }
+            else
+            {
+                MessageBox.Show("No geolocation data available yet. Try clicking after fetching an IP.");
+            }
+        }
+
     }
 }

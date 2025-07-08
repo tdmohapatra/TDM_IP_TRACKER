@@ -61,6 +61,10 @@
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             documentationToolStripMenuItem = new ToolStripMenuItem();
+            myMapToolStripMenuItem = new ToolStripMenuItem();
+            gOOGLEMAPToolStripMenuItem = new ToolStripMenuItem();
+            gOOGLEMAPToolStripMenuItem1 = new ToolStripMenuItem();
+            sTREETMAPToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabDashboard = new TabPage();
             tabTools = new TabPage();
@@ -139,7 +143,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem, helpToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem, helpToolStripMenuItem, myMapToolStripMenuItem, gOOGLEMAPToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(797, 24);
@@ -209,6 +213,34 @@
             documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
             documentationToolStripMenuItem.Size = new Size(157, 22);
             documentationToolStripMenuItem.Text = "Documentation";
+            // 
+            // myMapToolStripMenuItem
+            // 
+            myMapToolStripMenuItem.Name = "myMapToolStripMenuItem";
+            myMapToolStripMenuItem.Size = new Size(63, 20);
+            myMapToolStripMenuItem.Text = "My Map";
+            myMapToolStripMenuItem.Click += myMapToolStripMenuItem_Click;
+            // 
+            // gOOGLEMAPToolStripMenuItem
+            // 
+            gOOGLEMAPToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { gOOGLEMAPToolStripMenuItem1, sTREETMAPToolStripMenuItem });
+            gOOGLEMAPToolStripMenuItem.Name = "gOOGLEMAPToolStripMenuItem";
+            gOOGLEMAPToolStripMenuItem.Size = new Size(45, 20);
+            gOOGLEMAPToolStripMenuItem.Text = "MAP";
+            // 
+            // gOOGLEMAPToolStripMenuItem1
+            // 
+            gOOGLEMAPToolStripMenuItem1.Name = "gOOGLEMAPToolStripMenuItem1";
+            gOOGLEMAPToolStripMenuItem1.Size = new Size(180, 22);
+            gOOGLEMAPToolStripMenuItem1.Text = "GOOGLE MAP";
+            gOOGLEMAPToolStripMenuItem1.Click += gOOGLEMAPToolStripMenuItem1_Click;
+            // 
+            // sTREETMAPToolStripMenuItem
+            // 
+            sTREETMAPToolStripMenuItem.Name = "sTREETMAPToolStripMenuItem";
+            sTREETMAPToolStripMenuItem.Size = new Size(180, 22);
+            sTREETMAPToolStripMenuItem.Text = "STREET MAP";
+            sTREETMAPToolStripMenuItem.Click += sTREETMAPToolStripMenuItem_Click;
             // 
             // tabControl1
             // 
@@ -382,5 +414,9 @@
         private Button BtnPingVulnerabilityScan;
         private Button btnWiFiScanner;
         private Button btnPacketTracker;
+        private ToolStripMenuItem myMapToolStripMenuItem;
+        private ToolStripMenuItem gOOGLEMAPToolStripMenuItem;
+        private ToolStripMenuItem gOOGLEMAPToolStripMenuItem1;
+        private ToolStripMenuItem sTREETMAPToolStripMenuItem;
     }
     }
