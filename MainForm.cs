@@ -291,10 +291,19 @@ namespace TDM_IP_Tracker
         private void aboutToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             // Create an instance of the PingVulnerabilityScannerForm
-            NetworkCommandReference  networkCommandRef= new NetworkCommandReference();
+            NetworkCommandReference networkCommandRef = new NetworkCommandReference();
 
             // Show the form
             networkCommandRef.Show();
+        }
+
+        private void btnPacketTracker_Click(object sender, EventArgs e)
+        {
+            // Create an instance of the PingVulnerabilityScannerForm
+            PacketTrackerForm packetTrackerFrm = new PacketTrackerForm();
+
+            // Show the form
+            packetTrackerFrm.Show();
         }
     }
 }

@@ -64,6 +64,7 @@
             tabControl1 = new TabControl();
             tabDashboard = new TabPage();
             tabTools = new TabPage();
+            btnPacketTracker = new Button();
             btnWiFiScanner = new Button();
             BtnPingVulnerabilityScan = new Button();
             btnPortScanner = new Button();
@@ -155,19 +156,19 @@
             // exportToolStripMenuItem
             // 
             exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            exportToolStripMenuItem.Size = new Size(180, 22);
+            exportToolStripMenuItem.Size = new Size(137, 22);
             exportToolStripMenuItem.Text = "Export Data";
             // 
             // importToolStripMenuItem
             // 
             importToolStripMenuItem.Name = "importToolStripMenuItem";
-            importToolStripMenuItem.Size = new Size(180, 22);
+            importToolStripMenuItem.Size = new Size(137, 22);
             importToolStripMenuItem.Text = "Import Data";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(137, 22);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // settingsToolStripMenuItem
@@ -180,13 +181,13 @@
             // pingSettingsToolStripMenuItem
             // 
             pingSettingsToolStripMenuItem.Name = "pingSettingsToolStripMenuItem";
-            pingSettingsToolStripMenuItem.Size = new Size(180, 22);
+            pingSettingsToolStripMenuItem.Size = new Size(143, 22);
             pingSettingsToolStripMenuItem.Text = "Ping Settings";
             // 
             // themeToolStripMenuItem
             // 
             themeToolStripMenuItem.Name = "themeToolStripMenuItem";
-            themeToolStripMenuItem.Size = new Size(180, 22);
+            themeToolStripMenuItem.Size = new Size(143, 22);
             themeToolStripMenuItem.Text = "Theme";
             // 
             // helpToolStripMenuItem
@@ -199,14 +200,14 @@
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Size = new Size(157, 22);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click_1;
             // 
             // documentationToolStripMenuItem
             // 
             documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            documentationToolStripMenuItem.Size = new Size(180, 22);
+            documentationToolStripMenuItem.Size = new Size(157, 22);
             documentationToolStripMenuItem.Text = "Documentation";
             // 
             // tabControl1
@@ -235,6 +236,7 @@
             // 
             // tabTools
             // 
+            tabTools.Controls.Add(btnPacketTracker);
             tabTools.Controls.Add(btnWiFiScanner);
             tabTools.Controls.Add(BtnPingVulnerabilityScan);
             tabTools.Controls.Add(btnPortScanner);
@@ -247,6 +249,21 @@
             tabTools.TabIndex = 1;
             tabTools.Text = "Tools";
             tabTools.UseVisualStyleBackColor = true;
+            // 
+            // btnPacketTracker
+            // 
+            btnPacketTracker.BackColor = Color.FromArgb(0, 120, 215);
+            btnPacketTracker.FlatAppearance.BorderSize = 0;
+            btnPacketTracker.FlatStyle = FlatStyle.Flat;
+            btnPacketTracker.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnPacketTracker.ForeColor = Color.White;
+            btnPacketTracker.Location = new Point(27, 50);
+            btnPacketTracker.Name = "btnPacketTracker";
+            btnPacketTracker.Size = new Size(200, 60);
+            btnPacketTracker.TabIndex = 5;
+            btnPacketTracker.Text = "PACKET TRACKER";
+            btnPacketTracker.UseVisualStyleBackColor = false;
+            btnPacketTracker.Click += btnPacketTracker_Click;
             // 
             // btnWiFiScanner
             // 
@@ -364,5 +381,6 @@
         }
         private Button BtnPingVulnerabilityScan;
         private Button btnWiFiScanner;
+        private Button btnPacketTracker;
     }
     }
