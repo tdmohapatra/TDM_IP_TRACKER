@@ -14,5 +14,26 @@ namespace TDM_IP_Tracker
             //Application.Run(new Form1());
             Application.Run(new MainForm());
         }
+
+
+        //static void Main()
+        //{
+        //    // Initialize application configuration
+        //    ApplicationConfiguration.Initialize();
+
+        //    // Load the icon from resources
+        //    byte[] iconBytes = Properties.Resources.TDM_NETWORK_APP; // Ensure this matches your resource name
+        //    using (MemoryStream ms = new MemoryStream(iconBytes))
+        //    {
+        //        // Create a new Icon from the byte array and set it as the application's icon
+        //        MainForm mainForm = new MainForm
+        //        {
+        //            Icon = new Icon(ms)
+        //        };
+
+        //        // Run the application
+        //        Application.Run(mainForm);
+        //    }
+        //}
     }
 }

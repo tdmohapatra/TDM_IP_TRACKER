@@ -16,6 +16,7 @@ namespace TDM_IP_Tracker
         private long lastResponseTime;
         private DateTime lastChecked;
         private bool isChecked = true;
+        private PictureBox pictureStatusIcon;
 
         public event EventHandler StatusChanged;
 
@@ -27,16 +28,41 @@ namespace TDM_IP_Tracker
             InitializeUI();
         }
 
+
+
         private void InitializeUI()
         {
             SuspendLayout();
 
-            this.BackColor = Color.White;
-            this.BorderStyle = BorderStyle.FixedSingle;
-            this.Padding = new Padding(5);
-            this.Size = new Size(200, 110);
+            // Initialize Labels and Checkbox
+            lblSection = CreateLabel($"Section: {section}", FontStyle.Bold);
+            chkSelected = new CheckBox { Text = ipAddress, Checked = true, Dock = DockStyle.Top };
+            lblStatus = CreateLabel("Status: Unknown");
+            lblResponse = CreateLabel("Response: N/A");
+            lblChecked = CreateLabel("Last checked: Never");
 
-            TableLayoutPanel tableLayout = new TableLayoutPanel
+            // Create status icon PictureBox
+            pictureStatusIcon = new PictureBox
+            {
+                Size = new Size(20, 20),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Image = Properties.Resources.pending_icon, // Initial icon
+                Margin = new Padding(2),
+                Dock = DockStyle.Left
+            };
+
+            // Combine icon + status in a horizontal panel
+            var statusPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                FlowDirection = FlowDirection.LeftToRight
+            };
+            statusPanel.Controls.Add(pictureStatusIcon);
+            statusPanel.Controls.Add(lblStatus);
+
+            // Create main vertical layout
+            var tableLayout = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
@@ -44,24 +70,25 @@ namespace TDM_IP_Tracker
                 AutoSize = true,
             };
 
-            lblSection = CreateLabel($"Section: {section}", FontStyle.Bold);
-            chkSelected = new CheckBox { Text = ipAddress, Checked = true, Dock = DockStyle.Top };
-            lblStatus = CreateLabel("Status: Unknown");
-            lblResponse = CreateLabel("Response: N/A");
-            lblChecked = CreateLabel("Last checked: Never");
-
             tableLayout.Controls.Add(lblSection, 0, 0);
             tableLayout.Controls.Add(chkSelected, 0, 1);
-            tableLayout.Controls.Add(lblStatus, 0, 2);
+            tableLayout.Controls.Add(statusPanel, 0, 2);
             tableLayout.Controls.Add(lblResponse, 0, 3);
             tableLayout.Controls.Add(lblChecked, 0, 4);
 
+            // Set layout and appearance of control
+            this.BackColor = Color.White;
+            this.BorderStyle = BorderStyle.FixedSingle;
+            this.Padding = new Padding(5);
+            this.Size = new Size(200, 110);
             this.Controls.Add(tableLayout);
 
+            // Event handler for checkbox
             chkSelected.CheckedChanged += (s, e) => Checked = chkSelected.Checked;
 
             ResumeLayout();
         }
+
 
         private Label CreateLabel(string text, FontStyle style = FontStyle.Regular)
         {
@@ -122,12 +149,30 @@ namespace TDM_IP_Tracker
             chkSelected.Text = $"{ipAddress} {(string.IsNullOrEmpty(hostName) ? "" : $"({hostName})")}";
             lblSection.Text = $"Section: {section}";
 
+
             if (lastStatus == IPStatus.Success)
             {
                 lblStatus.Text = $"Status: Online";
                 lblStatus.ForeColor = Color.Green;
                 lblResponse.Text = $"Response: {lastResponseTime} ms";
                 this.BackColor = Color.FromArgb(230, 245, 230);
+                pictureStatusIcon.Image = Properties.Resources.online_icon;
+            }
+            else if (lastStatus == IPStatus.TimedOut)
+            {
+                lblStatus.Text = $"Status: Timed Out";
+                lblStatus.ForeColor = Color.OrangeRed;
+                lblResponse.Text = "Response: N/A";
+                this.BackColor = Color.FromArgb(255, 235, 210);
+                pictureStatusIcon.Image = Properties.Resources.error_icon;
+            }
+            else if (lastStatus == IPStatus.Unknown)
+            {
+                lblStatus.Text = $"Status: Unknown";
+                lblStatus.ForeColor = Color.Gray;
+                lblResponse.Text = "Response: N/A";
+                this.BackColor = Color.LightGray;
+                pictureStatusIcon.Image = Properties.Resources.error_icon;
             }
             else
             {
@@ -135,7 +180,9 @@ namespace TDM_IP_Tracker
                 lblStatus.ForeColor = Color.Red;
                 lblResponse.Text = "Response: N/A";
                 this.BackColor = Color.FromArgb(255, 230, 230);
+                pictureStatusIcon.Image = Properties.Resources.offline_icon;
             }
+
 
             lblChecked.Text = $"Last checked: {lastChecked:g}";
         }

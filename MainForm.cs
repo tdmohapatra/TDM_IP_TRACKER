@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Devices;
+using SharpPcap;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,6 +14,12 @@ namespace TDM_IP_Tracker
 
         public MainForm()
         {
+            byte[] iconBytes = Properties.Resources.TDM_NETWORK_APP;
+            using (MemoryStream ms = new MemoryStream(iconBytes))
+            {
+                this.Icon = new Icon(ms);
+            }
+            // where MyIcon is a resource in your project
             InitializeComponent();
             WireUpEvents();
         }
@@ -135,6 +143,7 @@ namespace TDM_IP_Tracker
         {
             UpdateStatus("Launching Single IP Scanner...");
             var singleIPForm = new SingleIPForm();
+            LoadFormIcon(singleIPForm);
             singleIPForm.Show();
         }
 
@@ -142,6 +151,8 @@ namespace TDM_IP_Tracker
         {
             UpdateStatus("Launching Mass IP Scanner...");
             var massIPForm = new MassIPForm();
+            LoadFormIcon(massIPForm);
+
             massIPForm.Show();
         }
 
@@ -149,6 +160,8 @@ namespace TDM_IP_Tracker
         {
             UpdateStatus("Launching Port Scanner...");
             var portScannerForm = new PortScannerForm();
+            LoadFormIcon(portScannerForm);
+
             portScannerForm.Show();
         }
 
@@ -156,6 +169,8 @@ namespace TDM_IP_Tracker
         {
             UpdateStatus("Launching Network Monitor...");
             var networkMonitorForm = new NetworkMonitorForm();
+            LoadFormIcon(networkMonitorForm);
+
             networkMonitorForm.Show();
         }
 
@@ -163,6 +178,8 @@ namespace TDM_IP_Tracker
         {
             UpdateStatus("Launching Advanced Ping Tool...");
             var pingTestForm = new PingTestForm();
+            LoadFormIcon(pingTestForm);
+
             pingTestForm.Show();
         }
         #endregion
@@ -270,19 +287,24 @@ namespace TDM_IP_Tracker
 
         #endregion
 
+ 
         private void BtnPingVulnerabilityScan_Click(object sender, EventArgs e)
         {
             // Create an instance of the PingVulnerabilityScannerForm
             PingVulnerabilityScannerForm pingVulnerabilityForm = new PingVulnerabilityScannerForm();
+            LoadFormIcon(pingVulnerabilityForm);
 
             // Show the form
             pingVulnerabilityForm.Show();
-        }
 
+        }
         private void btnWiFiScanner_Click(object sender, EventArgs e)
         {
-            // Create an instance of the PingVulnerabilityScannerForm
+            // Create an instance of the WiFiScannerForm
             WiFiScannerForm WiFiScanner = new WiFiScannerForm();
+
+            // Load the icon for the new form
+            LoadFormIcon(WiFiScanner);
 
             // Show the form
             WiFiScanner.Show();
@@ -290,39 +312,108 @@ namespace TDM_IP_Tracker
 
         private void aboutToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            // Create an instance of the PingVulnerabilityScannerForm
-            NetworkCommandReference networkCommandRef = new NetworkCommandReference();
+            // Create an instance of the AboutForm
+            AboutForm aboutForm = new AboutForm();
+
+            // Load the icon for the new form
+            LoadFormIcon(aboutForm);
 
             // Show the form
-            networkCommandRef.Show();
+            aboutForm.Show();
         }
 
         private void btnPacketTracker_Click(object sender, EventArgs e)
         {
-            // Create an instance of the PingVulnerabilityScannerForm
+            // Create an instance of the PacketTrackerForm
             PacketTrackerForm packetTrackerFrm = new PacketTrackerForm();
+
+            // Load the icon for the new form
+            LoadFormIcon(packetTrackerFrm);
 
             // Show the form
             packetTrackerFrm.Show();
         }
 
-
         private void gOOGLEMAPToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            // Create an instance of the GoogleMapPage
             GoogleMapPage MyGoogleForm = new GoogleMapPage();
+
+            // Load the icon for the new form
+            LoadFormIcon(MyGoogleForm);
 
             // Show the form
             MyGoogleForm.Show();
-
         }
 
         private void sTREETMAPToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Create an instance of the OpenStreetMapPage
             OpenStreetMapPage OpenStreetForm = new OpenStreetMapPage();
+
+            // Load the icon for the new form
+            LoadFormIcon(OpenStreetForm);
 
             // Show the form
             OpenStreetForm.Show();
-
         }
+
+        private void documentationToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            // Create an instance of the NetworkCommandReference
+            NetworkCommandReference networkCommandRef = new NetworkCommandReference();
+
+            // Load the icon for the new form
+            LoadFormIcon(networkCommandRef);
+
+            // Show the form
+            networkCommandRef.Show();
+        }
+
+
+
+        private void LoadFormIcon(Form form)
+        {
+            try
+            {
+                // Load the icon from resources as a byte array
+                byte[] iconBytes = Properties.Resources.TDM_NETWORK_APP; // Ensure the resource name matches
+
+                // Convert the byte array to a stream
+                using (MemoryStream ms = new MemoryStream(iconBytes))
+                {
+                    // Load the icon from the stream and assign it to the form's Icon property
+                    form.Icon = new Icon(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions (e.g., if the icon isn't found or there's an issue with the resources)
+                MessageBox.Show($"Error loading icon: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        //private void LoadFormIcon()
+        //{
+        //    try
+        //    {
+        //        // Load the icon from resources as a byte array
+        //        byte[] iconBytes = Properties.Resources.TDM_NETWORK_APP; // Make sure the resource name matches
+
+        //        // Convert the byte array to a stream
+        //        using (MemoryStream ms = new MemoryStream(iconBytes))
+        //        {
+        //            // Load the icon from the stream and assign it to the form's Icon property
+        //            this.Icon = new Icon(ms);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle any exceptions (e.g., if the icon isn't found or there's an issue with the resources)
+        //        MessageBox.Show($"Error loading icon: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        // Other code related to the AboutForm, such as button clicks or event handlers...
     }
 }

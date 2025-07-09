@@ -112,52 +112,226 @@ namespace TDM_IP_Tracker
             // Force a layout update
             tabPageSections.PerformLayout();
         }
+        //private void UpdateSectionChart()
+        //{
+        //    if (sectionChart == null) return;
+
+        //    var series = sectionChart.Series["Section Status"];
+        //    series.Points.Clear();
+
+        //    List<string> sections;
+        //    Dictionary<string, int> statsSnapshot;
+        //    Dictionary<string, List<IPControl>> ipsSnapshot;
+
+        //    lock (sectionStatsLock)
+        //    {
+        //        statsSnapshot = new Dictionary<string, int>(sectionStats);
+        //        sections = statsSnapshot.Keys.OrderBy(s => s).ToList();
+        //    }
+
+        //    lock (sectionIPsLock)
+        //    {
+        //        ipsSnapshot = new Dictionary<string, List<IPControl>>(sectionIPs);
+        //    }
+
+        //    foreach (var section in sections)
+        //    {
+        //        if (!ipsSnapshot.TryGetValue(section, out var ipList))
+        //            continue;
+
+        //        int total = ipList.Count;
+        //        int active = statsSnapshot[section];
+
+        //        var point = new DataPoint
+        //        {
+        //            AxisLabel = section,
+        //            YValues = new double[] { active },
+        //            Label = $"{active}/{total}",
+        //            Color = Color.FromArgb(76, 175, 80),
+        //            LabelForeColor = Color.Black
+        //        };
+
+        //        series.Points.Add(point);
+        //    }
+
+        //    if (sectionChart.ChartAreas.Count > 0)
+        //    {
+        //        var area = sectionChart.ChartAreas[0];
+
+        //        area.AxisX.Interval = 1;
+        //        area.AxisX.LabelStyle.Angle = -45;
+
+        //        area.Position.Auto = false;
+        //        area.Position.X = 0;
+        //        area.Position.Y = 0;
+        //        area.Position.Width = 100;
+        //        area.Position.Height = 100;
+
+        //        area.InnerPlotPosition.Auto = false;
+        //        area.InnerPlotPosition.X = 5;
+        //        area.InnerPlotPosition.Y = 5;
+        //        area.InnerPlotPosition.Width = 90;
+        //        area.InnerPlotPosition.Height = 90;
+        //    }
+        //}
+
+        //private void UpdateSectionChart()
+        //{
+        //    if (sectionChart == null) return;
+
+        //    // Ensure the "Section Status" series exists
+        //    var series = sectionChart.Series["Section Status"];
+        //    if (series == null)
+        //    {
+        //        series = sectionChart.Series.Add("Section Status");
+        //    }
+
+        //    series.Points.Clear();
+
+        //    List<string> sections;
+        //    Dictionary<string, int> statsSnapshot;
+        //    Dictionary<string, List<IPControl>> ipsSnapshot;
+
+        //    lock (sectionStatsLock)
+        //    {
+        //        statsSnapshot = new Dictionary<string, int>(sectionStats);
+        //        sections = statsSnapshot.Keys.OrderBy(s => s).ToList();
+        //    }
+
+        //    lock (sectionIPsLock)
+        //    {
+        //        ipsSnapshot = new Dictionary<string, List<IPControl>>(sectionIPs);
+        //    }
+
+        //    foreach (var section in sections)
+        //    {
+        //        // Skip if the section doesn't exist in either snapshot
+        //        if (!statsSnapshot.ContainsKey(section) || !ipsSnapshot.ContainsKey(section))
+        //            continue;
+
+        //        var ipList = ipsSnapshot[section];
+        //        int total = ipList.Count;
+        //        int active = statsSnapshot[section];
+
+        //        if (total == 0) continue; // Skip sections with no IPs
+
+        //        var point = new DataPoint
+        //        {
+        //            AxisLabel = section,
+        //            YValues = new double[] { active },
+        //            Label = $"{active}/{total}",
+        //            Color = Color.FromArgb(76, 175, 80),
+        //            LabelForeColor = Color.Black
+        //        };
+
+        //        series.Points.Add(point);
+        //    }
+
+        //    // Ensure that the ChartArea exists and configure it
+        //    if (sectionChart.ChartAreas.Count > 0)
+        //    {
+        //        var area = sectionChart.ChartAreas[0];
+
+        //        area.AxisX.Interval = 1;
+        //        area.AxisX.LabelStyle.Angle = -45;
+
+        //        area.Position.Auto = false;
+        //        area.Position.X = 0;
+        //        area.Position.Y = 0;
+        //        area.Position.Width = 100;
+        //        area.Position.Height = 100;
+
+        //        area.InnerPlotPosition.Auto = false;
+        //        area.InnerPlotPosition.X = 5;
+        //        area.InnerPlotPosition.Y = 5;
+        //        area.InnerPlotPosition.Width = 90;
+        //        area.InnerPlotPosition.Height = 90;
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Error: Chart area not initialized.");
+        //    }
+        //}
+
+
         private void UpdateSectionChart()
         {
-            if (sectionChart == null) return;
+            if (sectionChart == null || sectionChart.IsDisposed)
+                return;
 
-            var series = sectionChart.Series["Section Status"];
-            series.Points.Clear();
-
-            List<string> sections;
-            Dictionary<string, int> statsSnapshot;
-            Dictionary<string, List<IPControl>> ipsSnapshot;
-
-            lock (sectionStatsLock)
+            if (sectionChart.InvokeRequired)
             {
-                statsSnapshot = new Dictionary<string, int>(sectionStats);
-                sections = statsSnapshot.Keys.OrderBy(s => s).ToList();
+                sectionChart.Invoke(new Action(UpdateSectionChart));
+                return;
             }
 
-            lock (sectionIPsLock)
+            try
             {
-                ipsSnapshot = new Dictionary<string, List<IPControl>>(sectionIPs);
-            }
-
-            foreach (var section in sections)
-            {
-                if (!ipsSnapshot.TryGetValue(section, out var ipList))
-                    continue;
-
-                int total = ipList.Count;
-                int active = statsSnapshot[section];
-
-                var point = new DataPoint
+                // Ensure ChartArea exists
+                if (sectionChart.ChartAreas.Count == 0)
                 {
-                    AxisLabel = section,
-                    YValues = new double[] { active },
-                    Label = $"{active}/{total}",
-                    Color = Color.FromArgb(76, 175, 80),
-                    LabelForeColor = Color.Black
-                };
+                    sectionChart.ChartAreas.Add(new ChartArea("Default"));
+                }
 
-                series.Points.Add(point);
-            }
+                // Ensure series exists
+                Series series;
+                if (sectionChart.Series.IndexOf("Section Status") < 0)
+                {
+                    series = new Series("Section Status")
+                    {
+                        ChartType = SeriesChartType.Column,
+                        IsValueShownAsLabel = true
+                    };
+                    sectionChart.Series.Add(series);
+                }
+                else
+                {
+                    series = sectionChart.Series["Section Status"];
+                    series.Points.Clear(); // <-- safe now
+                }
 
-            if (sectionChart.ChartAreas.Count > 0)
-            {
+                // Take snapshot of stats
+                List<string> sections;
+                Dictionary<string, int> statsSnapshot;
+                Dictionary<string, List<IPControl>> ipsSnapshot;
+
+                lock (sectionStatsLock)
+                {
+                    statsSnapshot = new Dictionary<string, int>(sectionStats);
+                    sections = statsSnapshot.Keys.OrderBy(s => s).ToList();
+                }
+
+                lock (sectionIPsLock)
+                {
+                    ipsSnapshot = new Dictionary<string, List<IPControl>>(sectionIPs);
+                }
+
+                foreach (var section in sections)
+                {
+                    if (!statsSnapshot.ContainsKey(section) || !ipsSnapshot.ContainsKey(section))
+                        continue;
+
+                    var ipList = ipsSnapshot[section];
+                    int total = ipList.Count;
+                    int active = statsSnapshot[section];
+
+                    if (total == 0)
+                        continue;
+
+                    var point = new DataPoint
+                    {
+                        AxisLabel = section,
+                        YValues = new double[] { active },
+                        Label = $"{active}/{total}",
+                        Color = Color.FromArgb(76, 175, 80),
+                        LabelForeColor = Color.Black
+                    };
+
+                    series.Points.Add(point);
+                }
+
+                // Configure chart area
                 var area = sectionChart.ChartAreas[0];
-
                 area.AxisX.Interval = 1;
                 area.AxisX.LabelStyle.Angle = -45;
 
@@ -173,7 +347,13 @@ namespace TDM_IP_Tracker
                 area.InnerPlotPosition.Width = 90;
                 area.InnerPlotPosition.Height = 90;
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating chart: {ex.Message}", "Chart Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+
 
 
         private void UpdateChartBySection()
@@ -351,14 +531,54 @@ namespace TDM_IP_Tracker
         }
 
 
+        //private void LoadIPsFromWorksheet(ExcelWorksheet worksheet)
+        //{
+        //    for (int row = 2; row <= worksheet.Dimension.Rows; row++)
+        //    {
+        //        var ipAddress = worksheet.Cells[row, 1].Text;
+        //        var section = string.IsNullOrEmpty(worksheet.Cells[row, 2].Text)
+        //            ? "General"
+        //            : worksheet.Cells[row, 2].Text;
+
+        //        if (!string.IsNullOrEmpty(ipAddress))
+        //        {
+        //            AddIPControl(ipAddress, section);
+        //        }
+        //    }
+        //}
+
         private void LoadIPsFromWorksheet(ExcelWorksheet worksheet)
         {
+            int ipColumnIndex = -1;
+            int sectionColumnIndex = -1;
+
+            // Detect headers in the first row
+            for (int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+                string header = worksheet.Cells[1, col].Text.Trim().ToLower();
+
+                if (header.Contains("ip") && ipColumnIndex == -1)
+                {
+                    ipColumnIndex = col;
+                }
+                else if ((header.Contains("section") || header.Contains("group") || header.Contains("zone")) && sectionColumnIndex == -1)
+                {
+                    sectionColumnIndex = col;
+                }
+            }
+
+            // Fallback to column 1 (IP) and column 2 (Section) if headers not found
+            if (ipColumnIndex == -1) ipColumnIndex = 1;
+            if (sectionColumnIndex == -1) sectionColumnIndex = 2;
+
+            // Load the data starting from row 2
             for (int row = 2; row <= worksheet.Dimension.Rows; row++)
             {
-                var ipAddress = worksheet.Cells[row, 1].Text;
-                var section = string.IsNullOrEmpty(worksheet.Cells[row, 2].Text)
-                    ? "General"
-                    : worksheet.Cells[row, 2].Text;
+                string ipAddress = worksheet.Cells[row, ipColumnIndex].Text.Trim();
+                string section = worksheet.Cells[row, sectionColumnIndex].Text.Trim();
+
+                if (string.IsNullOrEmpty(section))
+                    section = "General";
 
                 if (!string.IsNullOrEmpty(ipAddress))
                 {
@@ -366,6 +586,7 @@ namespace TDM_IP_Tracker
                 }
             }
         }
+
 
         private void AddIPControl(string ipAddress, string section = "General")
         {
@@ -409,23 +630,7 @@ namespace TDM_IP_Tracker
             sectionIPs[section].Add(ipControl);
         }
 
-        //private void TrackAllIPs()
-        //{
-        //    if (!ValidateIPsToTrack()) return;
 
-        //    PrepareForTracking();
-
-        //    Task.Run(() =>
-        //    {
-        //        //TrackIPsInParallel();
-
-        //        TrackIPsAsync();
-        //        //CompleteTracking();
-
-        //    });
-        //  //  CompleteTracking();
-        //    UpdateChartBySection();
-        //}
 
         private async void TrackAllIPs()
         {
@@ -487,24 +692,6 @@ namespace TDM_IP_Tracker
 
             await Task.WhenAll(tasks);
         }
-        //private async Task TrackIPsInParallelAsync()
-        //{
-        //    var ipsToTrack = ipControls.Where(ip => ip.Checked || !chkAutoCheck.Checked).ToList();
-        //    int total = ipsToTrack.Count;
-        //    int processed = 0;
-
-        //    var tasks = ipsToTrack.Select(async ipControl =>
-        //    {
-        //        await ipControl.PingAsync();  // Await the asynchronous ping
-
-        //        int processedCount = Interlocked.Increment(ref processed);
-        //        int progressValue = (int)((double)processedCount / total * 100);
-
-        //        UpdateProgressBar(progressValue);
-        //    });
-
-        //    await Task.WhenAll(tasks);  // Wait for all pings to complete
-        //}
 
 
 
@@ -558,16 +745,6 @@ namespace TDM_IP_Tracker
 
         #region UI Updates
 
-        //private void UpdateStats()
-        //{
-        //    int total = ipControls.Count;
-        //    int active = ipControls.Count(ip => ip.LastStatus == IPStatus.Success);
-        //    int failed = total - active;
-
-        //    UpdateStatsLabels(total, active, failed);
-        //    UpdateChart(active, failed);
-        //}
-
         private void UpdateStats()
         {
             if (InvokeRequired)
@@ -606,24 +783,6 @@ namespace TDM_IP_Tracker
         }
 
 
-        //private void UpdateDataGridView()
-        //{
-        //    if (dataGridViewDetails.InvokeRequired)
-        //    {
-        //        dataGridViewDetails.Invoke(new Action(UpdateDataGridView));
-        //        return;
-        //    }
-
-        //    dataGridViewDetails.SuspendLayout();
-        //    dataGridViewDetails.Rows.Clear();
-
-        //    foreach (var ipControl in ipControls)
-        //    {
-        //        AddIPControlToGridView(ipControl);
-        //    }
-
-        //    dataGridViewDetails.ResumeLayout();
-        //}
 
         private void UpdateDataGridView()
         {
@@ -658,27 +817,7 @@ namespace TDM_IP_Tracker
             ColorRowBasedOnStatus(rowIndex, ipControl.LastStatus);
         }
 
-        //private void UpdateSectionGridView()
-        //{
-        //    var grid = GetSectionGridView();
-        //    if (grid == null) return;
 
-        //    if (grid.InvokeRequired)
-        //    {
-        //        grid.Invoke(new Action(UpdateSectionGridView));
-        //        return;
-        //    }
-
-        //    grid.SuspendLayout();
-        //    grid.Rows.Clear();
-
-        //    foreach (var section in sectionStats.Keys.OrderBy(s => s))
-        //    {
-        //        AddSectionToGridView(grid, section);
-        //    }
-
-        //    grid.ResumeLayout();
-        //}
 
         private void UpdateSectionGridView()
         {

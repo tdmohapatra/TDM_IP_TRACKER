@@ -109,5 +109,15 @@ namespace TDM_IP_Tracker.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TDM_NETWORK_APP {
+            get {
+                object obj = ResourceManager.GetObject("TDM_NETWORK_APP", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

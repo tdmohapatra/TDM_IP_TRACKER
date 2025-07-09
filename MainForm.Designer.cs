@@ -214,10 +214,8 @@
             documentationToolStripMenuItem.Size = new Size(157, 22);
             documentationToolStripMenuItem.Text = "Documentation";
             // 
-            // myMapToolStripMenuItem
             // 
-
-            // 
+    
             // gOOGLEMAPToolStripMenuItem
             // 
             gOOGLEMAPToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { gOOGLEMAPToolStripMenuItem1, sTREETMAPToolStripMenuItem });
