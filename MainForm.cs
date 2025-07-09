@@ -306,13 +306,6 @@ namespace TDM_IP_Tracker
             packetTrackerFrm.Show();
         }
 
-        private void myMapToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MyMap MyMapForm = new MyMap();
-
-            // Show the form
-            MyMapForm.Show();
-        }
 
         private void gOOGLEMAPToolStripMenuItem1_Click(object sender, EventArgs e)
         {

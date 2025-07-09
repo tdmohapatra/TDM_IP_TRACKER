@@ -20,7 +20,7 @@ namespace TDM_IP_Tracker
         private static readonly HttpClient _httpClient = new HttpClient();
         private double? lastLatitude;
         private double? lastLongitude;
-
+        private OpenStreetMapPage openStreetMapPage = null;
         public PingTestForm()
         {
             InitializeComponent();
@@ -568,19 +568,47 @@ namespace TDM_IP_Tracker
             else
                 action();
         }
+        //private void txtGeoLocation_Click(object sender, EventArgs e)
+        //{
+        //    // Check if we have valid coordinates
+        //    if (lastLatitude.HasValue && lastLongitude.HasValue)
+        //    {
+        //        // Show map with the last known coordinates
+        //        var mapForm = new OpenStreetMapPage();  // OpenStreetMapPage or your custom map page
+        //        mapForm.Show();
+
+        //        // Pass the last known coordinates to the map
+        //        mapForm.AddMapMarker(lastLatitude.Value, lastLongitude.Value, "Location from IP");
+        //    }
+        //    else
+        //    {
+        //        // If no coordinates are available, use a default location (India or any default value)
+        //        var mapForm = new OpenStreetMapPage();  // OpenStreetMapPage or your custom map page
+        //        mapForm.Show();
+
+        //        // Use a default fallback location (India) in case no IP-based geolocation data is available
+        //        mapForm.AddMapMarker(20.5937, 78.9629, "Default Location (India)");  // Default India coordinates
+        //    }
+        //}
+
+        // Event handler to open the map form
         private void txtGeoLocation_Click(object sender, EventArgs e)
         {
-            if (lastLatitude.HasValue && lastLongitude.HasValue)
+            // Check if the OpenStreetMapPage instance is null or already disposed
+            if (openStreetMapPage == null || openStreetMapPage.IsDisposed)
             {
-                var mapForm = new MyMap();
-                mapForm.Show();
-                mapForm.AddMapMarker(lastLatitude.Value, lastLongitude.Value, "Location from IP");
+                // If the form is not open or disposed, create a new instance
+                openStreetMapPage = new OpenStreetMapPage();
+                openStreetMapPage.FormClosed += (s, args) => openStreetMapPage = null; // Reset the reference when the form is closed
+                openStreetMapPage.Show();
             }
             else
             {
-                MessageBox.Show("No geolocation data available yet. Try clicking after fetching an IP.");
+                // If the form is already open, bring it to the front
+                openStreetMapPage.BringToFront();
             }
         }
+
 
     }
 }

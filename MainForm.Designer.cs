@@ -216,10 +216,7 @@
             // 
             // myMapToolStripMenuItem
             // 
-            myMapToolStripMenuItem.Name = "myMapToolStripMenuItem";
-            myMapToolStripMenuItem.Size = new Size(63, 20);
-            myMapToolStripMenuItem.Text = "My Map";
-            myMapToolStripMenuItem.Click += myMapToolStripMenuItem_Click;
+
             // 
             // gOOGLEMAPToolStripMenuItem
             // 

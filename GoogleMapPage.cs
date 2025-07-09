@@ -1,5 +1,4 @@
 ﻿using Microsoft.Web.WebView2.WinForms;
-using Microsoft.Web.WebView2.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.Windows.Forms;
@@ -18,9 +17,14 @@ namespace TDM_IP_Tracker
 
         private async void InitializeAsync()
         {
+            // Ensure WebView2 is initialized
             await webView2.EnsureCoreWebView2Async();
             webView2.CoreWebView2.Settings.AreDevToolsEnabled = false;
+
+            // Handle messages from the JavaScript (coordinates)
             webView2.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+
+            // Load the Google Map in the WebView2 control
             LoadGoogleMap();
         }
 
@@ -33,7 +37,11 @@ namespace TDM_IP_Tracker
     <meta charset='utf-8' />
     <title>Google Maps</title>
     <style>
-        html, body, #map {{ height: 100%; margin: 0; padding: 0; }}
+        html, body, #map {{
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }}
         #floating-panel {{
             position: absolute;
             top: 10px;
@@ -44,7 +52,7 @@ namespace TDM_IP_Tracker
             border: 1px solid #999;
             width: 50%;
             text-align: center;
-            font-family: 'Roboto','sans-serif';
+            font-family: 'Roboto', 'sans-serif';
             line-height: 30px;
         }}
         #directions-panel {{
@@ -107,13 +115,17 @@ namespace TDM_IP_Tracker
                             marker.setPosition(pos);
                             map.setZoom(15);
 
-                            // Send coordinates to WinForms app
-                            window.chrome.webview.postMessage(JSON.stringify({{ type: 'coordinates', lat: pos.lat, lng: pos.lng }}));
+                            // Send coordinates to WinForms app via WebView2
+                            window.chrome.webview.postMessage(JSON.stringify({{
+                                type: 'coordinates',
+                                lat: pos.lat,
+                                lng: pos.lng
+                            }}));
                         }},
                         () => alert('Error: The Geolocation service failed.')
                     );
                 }} else {{
-                    alert('Error: Your browser doesn\\'t support geolocation.');
+                    alert('Error: Your browser doesn\'t support geolocation.');
                 }}
             }});
 
@@ -137,7 +149,11 @@ namespace TDM_IP_Tracker
 
             marker.addListener('dragend', () => {{
                 const pos = marker.getPosition();
-                window.chrome.webview.postMessage(JSON.stringify({{ type: 'coordinates', lat: pos.lat(), lng: pos.lng() }}));
+                window.chrome.webview.postMessage(JSON.stringify({{
+                    type: 'coordinates',
+                    lat: pos.lat(),
+                    lng: pos.lng()
+                }}));
             }});
         }}
 
@@ -149,7 +165,11 @@ namespace TDM_IP_Tracker
                     map.setCenter(results[0].geometry.location);
                     marker.setPosition(results[0].geometry.location);
                     map.setZoom(15);
-                    window.chrome.webview.postMessage(JSON.stringify({{ type: 'coordinates', lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() }}));
+                    window.chrome.webview.postMessage(JSON.stringify({{
+                        type: 'coordinates',
+                        lat: results[0].geometry.location.lat(),
+                        lng: results[0].geometry.location.lng()
+                    }}));
                 }} else {{
                     alert('Geocode was not successful: ' + status);
                 }}
@@ -169,6 +189,7 @@ namespace TDM_IP_Tracker
             webView2.NavigateToString(html);
         }
 
+        // Handle the message received from JavaScript (coordinates)
         private void CoreWebView2_WebMessageReceived(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
         {
             try
@@ -180,7 +201,8 @@ namespace TDM_IP_Tracker
                     double lng = message.lng;
 
                     Console.WriteLine($"Coordinates received from JS: {lat}, {lng}");
-                    // TODO: Update UI or do other actions with coordinates here
+                    // TODO: Update UI or perform other actions with coordinates here
+                    // Example: Set the location in your form's controls or use it for other logic
                 }
             }
             catch (Exception ex)
