@@ -59,36 +59,6 @@
         {
 
 
-            // Add default text for detail labels for clarity
-            //lblInternalIP.Text = "Internal IP: N/A";
-            //lblExternalIP.Text = "External IP: N/A";
-            //lblMAC.Text = "MAC: N/A";
-            //lblSpeed.Text = "Speed: N/A";
-            //lblStatus.Text = "Status: N/A";
-            //lblPing.Text = "Ping: N/A";
-
-
-            //// Consistent font for all detail labels (optional)
-            //Font detailLabelFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
-            //lblInternalIP.Font = detailLabelFont;
-            //lblExternalIP.Font = detailLabelFont;
-            //lblMAC.Font = detailLabelFont;
-            //lblSpeed.Font = detailLabelFont;
-            //lblStatus.Font = detailLabelFont;
-            //lblPing.Font = detailLabelFont;
-
-            // Tab order for key controls
-            //cmbInterfaces.TabIndex = 0;
-            //btnRefresh.TabIndex = 1;
-            //groupBoxInterfaceDetails.TabIndex = 2;
-            //groupBoxNetworkTraffic.TabIndex = 3;
-            //groupBoxSystemUsage.TabIndex = 4;
-            //groupBoxConnections.TabIndex = 5;
-            //statusStrip.TabIndex = 6;
-
-            // Timer enabled explicitly
-            //timer1.Enabled = true;
-
 
             components = new System.ComponentModel.Container();
 
@@ -335,7 +305,6 @@
             Controls.Add(groupBoxNetworkTraffic);
             Controls.Add(groupBoxInterfaceDetails);
             Controls.Add(cmbInterfaces);
-            Controls.Add(btnStopAction);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "NetworkMonitorForm";
@@ -351,7 +320,7 @@
             btnStopAction.TabIndex = 12;
             btnStopAction.Text = "Stop";
             btnStopAction.UseVisualStyleBackColor = true;
-            // btnStopAction.Click += new System.EventHandler(btnStopAction_Click);
+            btnStopAction.Click += new System.EventHandler(btnStopAction_Click);
 
             // Add btnStopAction to the form controls once, after initialization
             Controls.Add(btnStopAction);

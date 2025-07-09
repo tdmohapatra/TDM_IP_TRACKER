@@ -8,9 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Management;
 using System.Net.Http;
-using System.Threading;
 
 namespace TDM_IP_Tracker
 {
@@ -22,12 +20,9 @@ namespace TDM_IP_Tracker
         private PerformanceCounter ramCounter;
 
         private NetworkInterface selectedInterface;
-        private long lastBytesSent;
-        private long lastBytesReceived;
-
         private DateTime lastUpdateTime;
 
-        private HttpClient httpClient = new HttpClient();
+        private readonly HttpClient httpClient = new();
 
         public NetworkMonitorForm()
         {
@@ -46,58 +41,72 @@ namespace TDM_IP_Tracker
 
         private void InitializeCharts()
         {
-            // Network Traffic Chart Setup
+            // Clear existing setup
             chartNetworkTraffic.Series.Clear();
             chartNetworkTraffic.ChartAreas.Clear();
-            var area = new ChartArea("NetworkArea");
-            area.AxisX.Title = "Time (s)";
-            area.AxisY.Title = "Bytes/s";
-            area.AxisY.Minimum = 0;
-            chartNetworkTraffic.ChartAreas.Add(area);
 
-            var seriesDownload = new Series("Download");
-            seriesDownload.ChartType = SeriesChartType.Line;
-            seriesDownload.Color = Color.Blue;
-            seriesDownload.BorderWidth = 2;
+            var networkArea = new ChartArea("NetworkArea");
+            networkArea.AxisX.Title = "Time (s)";
+            networkArea.AxisY.Title = "Bytes/s";
+            networkArea.AxisY.Minimum = 0;
+            chartNetworkTraffic.ChartAreas.Add(networkArea);
 
-            var seriesUpload = new Series("Upload");
-            seriesUpload.ChartType = SeriesChartType.Line;
-            seriesUpload.Color = Color.Red;
-            seriesUpload.BorderWidth = 2;
+            var downloadSeries = new Series("Download")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = Color.Blue,
+                BorderWidth = 2
+            };
 
-            chartNetworkTraffic.Series.Add(seriesDownload);
-            chartNetworkTraffic.Series.Add(seriesUpload);
+            var uploadSeries = new Series("Upload")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = Color.Red,
+                BorderWidth = 2
+            };
 
-            // System Usage Chart Setup
+            chartNetworkTraffic.Series.Add(downloadSeries);
+            chartNetworkTraffic.Series.Add(uploadSeries);
+
+            // System usage chart
             chartSystemUsage.Series.Clear();
             chartSystemUsage.ChartAreas.Clear();
-            var sysArea = new ChartArea("SystemArea");
-            sysArea.AxisX.Title = "Time (s)";
-            sysArea.AxisY.Title = "% Usage";
-            sysArea.AxisY.Minimum = 0;
-            sysArea.AxisY.Maximum = 100;
-            chartSystemUsage.ChartAreas.Add(sysArea);
 
-            var seriesCPU = new Series("CPU");
-            seriesCPU.ChartType = SeriesChartType.Line;
-            seriesCPU.Color = Color.Green;
-            seriesCPU.BorderWidth = 2;
+            var systemArea = new ChartArea("SystemArea");
+            systemArea.AxisX.Title = "Time (s)";
+            systemArea.AxisY.Title = "% Usage";
+            systemArea.AxisY.Minimum = 0;
+            systemArea.AxisY.Maximum = 100;
+            chartSystemUsage.ChartAreas.Add(systemArea);
 
-            var seriesRAM = new Series("RAM");
-            seriesRAM.ChartType = SeriesChartType.Line;
-            seriesRAM.Color = Color.Orange;
-            seriesRAM.BorderWidth = 2;
+            var cpuSeries = new Series("CPU")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = Color.Green,
+                BorderWidth = 2
+            };
 
-            chartSystemUsage.Series.Add(seriesCPU);
-            chartSystemUsage.Series.Add(seriesRAM);
+            var ramSeries = new Series("RAM")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = Color.Orange,
+                BorderWidth = 2
+            };
+
+            chartSystemUsage.Series.Add(cpuSeries);
+            chartSystemUsage.Series.Add(ramSeries);
         }
 
         private void LoadNetworkInterfaces()
         {
             cmbInterfaces.Items.Clear();
-            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(n => n.OperationalStatus == OperationalStatus.Up))
+
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces()
+                .Where(nic => nic.OperationalStatus == OperationalStatus.Up).ToList();
+
+            foreach (var nic in interfaces)
             {
-                cmbInterfaces.Items.Add(ni.Name);
+                cmbInterfaces.Items.Add(nic.Name);
             }
 
             if (cmbInterfaces.Items.Count > 0)
@@ -108,33 +117,37 @@ namespace TDM_IP_Tracker
 
         private void cmbInterfaces_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var interfaceName = cmbInterfaces.SelectedItem.ToString();
+            var selectedName = cmbInterfaces.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selectedName)) return;
+
             selectedInterface = NetworkInterface.GetAllNetworkInterfaces()
-                .FirstOrDefault(n => n.Name == interfaceName);
+                .FirstOrDefault(nic => nic.Name == selectedName);
 
             if (selectedInterface != null)
             {
                 UpdateInterfaceDetails();
                 SetupPerformanceCounters();
-                lastBytesSent = 0;
-                lastBytesReceived = 0;
             }
         }
 
         private void UpdateInterfaceDetails()
         {
             var ipProps = selectedInterface.GetIPProperties();
-            var ipv4Addr = ipProps.UnicastAddresses
-                .FirstOrDefault(a => a.Address.AddressFamily == AddressFamily.InterNetwork)?.Address.ToString() ?? "N/A";
+            var ipv4Address = ipProps.UnicastAddresses
+                .FirstOrDefault(addr => addr.Address.AddressFamily == AddressFamily.InterNetwork)?.Address.ToString() ?? "N/A";
 
-            lblInternalIP.Text = $"Internal IP: {ipv4Addr}";
-            lblMAC.Text = $"MAC: {selectedInterface.GetPhysicalAddress()}";
+            lblInternalIP.Text = $"Internal IP: {ipv4Address}";
+            lblMAC.Text = $"MAC: {FormatMacAddress(selectedInterface.GetPhysicalAddress())}";
             lblSpeed.Text = $"Speed: {selectedInterface.Speed / 1_000_000} Mbps";
             lblStatus.Text = $"Status: {selectedInterface.OperationalStatus}";
 
             _ = UpdateExternalIPAsync();
+            _ = UpdatePingAsync("8.8.8.8"); // Ping Google DNS
+        }
 
-            UpdatePingAsync("8.8.8.8"); // Ping Google DNS
+        private static string FormatMacAddress(PhysicalAddress address)
+        {
+            return string.Join(":", address.GetAddressBytes().Select(b => b.ToString("X2")));
         }
 
         private async Task UpdateExternalIPAsync()
@@ -150,20 +163,19 @@ namespace TDM_IP_Tracker
             }
         }
 
-        private async void UpdatePingAsync(string host)
+        private async Task UpdatePingAsync(string host)
         {
             try
             {
-                var ping = new Ping();
+                using var ping = new Ping();
                 var reply = await ping.SendPingAsync(host, 1000);
-                if (reply.Status == IPStatus.Success)
-                    lblPing.Text = $"Ping: {reply.RoundtripTime} ms";
-                else
-                    lblPing.Text = $"Ping: Timeout";
+                lblPing.Text = reply.Status == IPStatus.Success
+                    ? $"Ping: {reply.RoundtripTime} ms"
+                    : "Ping: Timeout";
             }
             catch
             {
-                lblPing.Text = $"Ping: Error";
+                lblPing.Text = "Ping: Error";
             }
         }
 
@@ -171,11 +183,10 @@ namespace TDM_IP_Tracker
         {
             try
             {
-                if (sentCounter != null) sentCounter.Dispose();
-                if (receivedCounter != null) receivedCounter.Dispose();
+                sentCounter?.Dispose();
+                receivedCounter?.Dispose();
 
-                string instanceName = GetPerformanceCounterInstanceName(selectedInterface);
-
+                var instanceName = GetPerformanceCounterInstanceName(selectedInterface);
                 sentCounter = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instanceName);
                 receivedCounter = new PerformanceCounter("Network Interface", "Bytes Received/sec", instanceName);
             }
@@ -186,30 +197,31 @@ namespace TDM_IP_Tracker
             }
         }
 
-        private string GetPerformanceCounterInstanceName(NetworkInterface ni)
+        private string GetPerformanceCounterInstanceName(NetworkInterface nic)
         {
             var category = new PerformanceCounterCategory("Network Interface");
             var instances = category.GetInstanceNames();
 
-            foreach (var name in instances)
+            // Match by interface Id substring (usually first 12 chars)
+            var idFragment = nic.Id.Substring(0, Math.Min(12, nic.Id.Length));
+
+            foreach (var instance in instances)
             {
-                if (name.Contains(ni.Id.Substring(0, 12))) // Partial match
+                if (instance.Contains(idFragment))
                 {
-                    return name;
+                    return instance;
                 }
             }
-            // fallback to first instance if no match
-            return instances.FirstOrDefault() ?? "";
+
+            // fallback
+            return instances.FirstOrDefault() ?? string.Empty;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             lblRealTimeClock.Text = DateTime.Now.ToString("HH:mm:ss");
 
-            UpdateSystemUsage();
-
-            if (sentCounter == null || receivedCounter == null)
-                return;
+            if (sentCounter == null || receivedCounter == null) return;
 
             float bytesSentPerSec = sentCounter.NextValue();
             float bytesReceivedPerSec = receivedCounter.NextValue();
@@ -219,69 +231,59 @@ namespace TDM_IP_Tracker
 
             UpdateNetworkTrafficChart(bytesSentPerSec, bytesReceivedPerSec);
 
-            // Update connection count
-            int totalConnections = dgvConnections.Rows.Count;
-            toolStripStatusLabelConnections.Text = $"Connections: {totalConnections}";
+            toolStripStatusLabelConnections.Text = $"Connections: {dgvConnections.Rows.Count}";
 
-            // Update system CPU and RAM on status bar
             float cpuUsage = cpuCounter.NextValue();
             float ramUsage = ramCounter.NextValue();
+
             toolStripStatusLabelCPU.Text = $"CPU: {cpuUsage:0.0}%";
             toolStripStatusLabelRAM.Text = $"RAM: {ramUsage:0.0}%";
 
             UpdateSystemUsageChart(cpuUsage, ramUsage);
         }
 
-        private void UpdateSystemUsage()
-        {
-            // Optional: Additional system metrics
-        }
-
         private void UpdateNetworkTrafficChart(float upload, float download)
         {
-            var seriesUpload = chartNetworkTraffic.Series["Upload"];
-            var seriesDownload = chartNetworkTraffic.Series["Download"];
+            var uploadSeries = chartNetworkTraffic.Series["Upload"];
+            var downloadSeries = chartNetworkTraffic.Series["Download"];
 
-            var now = DateTime.Now;
-            double xValue = (now - lastUpdateTime).TotalSeconds;
-
-            if (seriesUpload.Points.Count > 60)
+            if (uploadSeries.Points.Count > 60)
             {
-                seriesUpload.Points.RemoveAt(0);
-                seriesDownload.Points.RemoveAt(0);
+                uploadSeries.Points.RemoveAt(0);
+                downloadSeries.Points.RemoveAt(0);
             }
 
-            seriesUpload.Points.AddY(upload);
-            seriesDownload.Points.AddY(download);
-
-            lastUpdateTime = now;
+            uploadSeries.Points.AddY(upload);
+            downloadSeries.Points.AddY(download);
         }
 
         private void UpdateSystemUsageChart(float cpu, float ram)
         {
-            var seriesCPU = chartSystemUsage.Series["CPU"];
-            var seriesRAM = chartSystemUsage.Series["RAM"];
+            var cpuSeries = chartSystemUsage.Series["CPU"];
+            var ramSeries = chartSystemUsage.Series["RAM"];
 
-            if (seriesCPU.Points.Count > 60)
+            if (cpuSeries.Points.Count > 60)
             {
-                seriesCPU.Points.RemoveAt(0);
-                seriesRAM.Points.RemoveAt(0);
+                cpuSeries.Points.RemoveAt(0);
+                ramSeries.Points.RemoveAt(0);
             }
 
-            seriesCPU.Points.AddY(cpu);
-            seriesRAM.Points.AddY(ram);
+            cpuSeries.Points.AddY(cpu);
+            ramSeries.Points.AddY(ram);
         }
 
-        private string FormatBytes(float bytes)
+        private static string FormatBytes(float bytes)
         {
             string[] sizes = { "B", "KB", "MB", "GB" };
             double len = bytes;
             int order = 0;
+
             while (len >= 1024 && order < sizes.Length - 1)
             {
                 order++;
                 len /= 1024;
             }
+
             return $"{len:0.##} {sizes[order]}";
         }
 
@@ -289,8 +291,6 @@ namespace TDM_IP_Tracker
         {
             LoadNetworkInterfaces();
         }
-
-        // Add connection fetching and DataGridView population here with detailed info, e.g.:
 
         private void LoadActiveConnections()
         {
@@ -311,22 +311,28 @@ namespace TDM_IP_Tracker
                             procName = proc.ProcessName;
                         }
                     }
-                    catch { }
+                    catch { /* Ignore errors */ }
 
                     dgvConnections.Rows.Add("TCP", conn.LocalEndPoint.ToString(), conn.RemoteEndPoint.ToString(), conn.State.ToString(), procName);
                 }
             }
             catch
             {
-                // Handle exceptions silently or log
+                // Optional: log or handle errors
             }
         }
 
         private int GetPidFromTcpConn(TcpConnectionInformation conn)
         {
-            // Windows does not expose PID easily in managed code,
-            // You can use external libraries or PInvoke (too complex here).
+            // Getting PID from TcpConnectionInformation is non-trivial and requires PInvoke or third-party libraries.
+            // Return 0 as placeholder.
             return 0;
+        }
+
+        private void btnStopAction_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            MessageBox.Show("Monitoring stopped.");
         }
 
         protected override void OnShown(EventArgs e)
