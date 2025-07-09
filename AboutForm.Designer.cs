@@ -7,168 +7,302 @@ namespace TDM_IP_Tracker
 {
     public partial class AboutForm : Form
     {
-        private bool darkMode = false;  // Flag to toggle between light and dark mode
-        private Timer glowTimer;        // Timer for glow effect
+        private bool darkMode = true;  // Default to dark mode for modern look
+        private Timer glowTimer;
+        private int glowPhase = 0;
+        private Color[] glowColors = new Color[]
+        {
+            Color.FromArgb(0, 150, 255),   // Blue
+            Color.FromArgb(0, 200, 255),     // Cyan
+            Color.FromArgb(100, 220, 255),   // Light cyan
+            Color.FromArgb(0, 200, 255),     // Cyan
+            Color.FromArgb(0, 150, 255)      // Blue
+        };
 
         public AboutForm()
         {
             InitializeComponent();
-            ApplyTheme();   // Apply the theme based on the mode
+            ApplyTheme();
+            SetupModernControls();
         }
 
         private void AboutForm_Load(object sender, EventArgs e)
         {
-            // Setting the text for various labels
-            lblTitle.Text = "About TDM IP Tracker";
-            lblDescription.Text = "TDM IP Tracker is a powerful network monitoring and security tool designed for professionals to track, analyze, and optimize network performance.";
-            lblAboutMe.Text = "Developed by Tarakanta Dasmohapatra\nSenior Associate at Jindal Nature Cure\nContact: tmohapatra111@gmail.com\nMobile: 8114627876";
-            lblProjectInfo.Text = "This project was created to gather detailed network information for security, speed, and performance optimization.";
-            lblFeatures.Text = "Key Features:\n- Single IP Scanner\n- Mass IP Scanner\n- Port Scanner\n- Network Monitor\n- Ping Test\n- Wi-Fi Scanner\n- Packet Tracker";
-            lblUseCases.Text = "Use Cases:\n- IT Security\n- Cybersecurity\n- Network Engineers\n- Healthcare IT\n- Home Networking\n- Educational Institutions";
-            lblTechnicalStack.Text = "Technical Stack:\n- .NET Framework\n- C#\n- SharpPcap\n- Windows Forms";
+            lblTitle.Text = "TDM IP TRACKER";
+            lblVersion.Text = "Version 1.0.0";
+            lblDescription.Text = "A comprehensive network monitoring and security tool designed for IT professionals to track, analyze, and optimize network performance.";
 
-            // Start glow animation effect
+            lblFeatures.Text = "✦ Single IP Scanner\n✦ Mass IP Scanner\n✦ Port Scanner\n✦ Network Monitor\n✦ Ping Test\n✦ Wi-Fi Scanner\n✦ Packet Tracker";
+            lblUseCases.Text = "✦ IT Security\n✦ Cybersecurity\n✦ Network Engineering\n✦ Healthcare IT\n✦ Home Networking\n✦ Educational Institutions";
+            lblTechnicalStack.Text = "✦ .NET Framework\n✦ C#\n✦ SharpPcap\n✦ Windows Forms";
+
+            lblDeveloper.Text = "Developed by:";
+            lblDeveloperName.Text = "Tarakanta Dasmohapatra";
+            lblPosition.Text = "Senior Associate at Jindal Nature Cure";
+            lblContact.Text = "tmohapatra111@gmail.com | +91 8114627876";
+
             AnimateGlowEffect();
         }
+
+        private void SetupModernControls()
+        {
+            // Form styling
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Padding = new Padding(20);
+
+            // Set rounded corners (Windows 11+ style)
+            this.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 15, 15));
+        }
+
+        [System.Runtime.InteropServices.DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
         private void ApplyTheme()
         {
             if (darkMode)
             {
-                this.BackColor = Color.FromArgb(35, 35, 35);  // Dark background color
-                lblTitle.ForeColor = Color.FromArgb(0, 150, 255);  // Light Blue title color
-                lblDescription.ForeColor = Color.White;
-                lblAboutMe.ForeColor = Color.White;
-                lblProjectInfo.ForeColor = Color.White;
-                lblFeatures.ForeColor = Color.White;
-                lblUseCases.ForeColor = Color.White;
-                lblTechnicalStack.ForeColor = Color.White;
-                btnClose.BackColor = Color.FromArgb(0, 150, 255);  // Button color
+                // Dark theme colors
+                this.BackColor = Color.FromArgb(32, 32, 32);
+                panelMain.BackColor = Color.FromArgb(40, 40, 40);
+                panelMain.BorderStyle = BorderStyle.None;
+
+                // Title styling
+                lblTitle.ForeColor = Color.FromArgb(0, 150, 255);
+                lblVersion.ForeColor = Color.FromArgb(150, 150, 150);
+                lblDescription.ForeColor = Color.FromArgb(200, 200, 200);
+
+                // Section styling
+                lblFeatures.ForeColor = Color.FromArgb(220, 220, 220);
+                lblUseCases.ForeColor = Color.FromArgb(220, 220, 220);
+                lblTechnicalStack.ForeColor = Color.FromArgb(220, 220, 220);
+
+                // Developer info
+                lblDeveloper.ForeColor = Color.FromArgb(180, 180, 180);
+                lblDeveloperName.ForeColor = Color.FromArgb(0, 180, 255);
+                lblPosition.ForeColor = Color.FromArgb(180, 180, 180);
+                lblContact.ForeColor = Color.FromArgb(180, 180, 180);
+
+                // Button styling
+                btnClose.BackColor = Color.FromArgb(0, 120, 215);
                 btnClose.ForeColor = Color.White;
-                btnClose.FlatStyle = FlatStyle.Flat;
-                btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 150, 255);
+                btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 215);
+                btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 140, 235);
+                btnClose.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 100, 195);
             }
             else
             {
-                this.BackColor = Color.White;
-                lblTitle.ForeColor = Color.FromArgb(0, 120, 215);  // Dark blue for title
-                lblDescription.ForeColor = Color.Black;
-                lblAboutMe.ForeColor = Color.Black;
-                lblProjectInfo.ForeColor = Color.Black;
-                lblFeatures.ForeColor = Color.Black;
-                lblUseCases.ForeColor = Color.Black;
-                lblTechnicalStack.ForeColor = Color.Black;
-                btnClose.BackColor = Color.FromArgb(0, 120, 215);  // Button background color
+                // Light theme colors
+                this.BackColor = Color.FromArgb(240, 240, 240);
+                panelMain.BackColor = Color.White;
+                panelMain.BorderStyle = BorderStyle.FixedSingle;
+
+                // Title styling
+                lblTitle.ForeColor = Color.FromArgb(0, 120, 215);
+                lblVersion.ForeColor = Color.FromArgb(100, 100, 100);
+                lblDescription.ForeColor = Color.FromArgb(70, 70, 70);
+
+                // Section styling
+                lblFeatures.ForeColor = Color.FromArgb(50, 50, 50);
+                lblUseCases.ForeColor = Color.FromArgb(50, 50, 50);
+                lblTechnicalStack.ForeColor = Color.FromArgb(50, 50, 50);
+
+                // Developer info
+                lblDeveloper.ForeColor = Color.FromArgb(100, 100, 100);
+                lblDeveloperName.ForeColor = Color.FromArgb(0, 120, 215);
+                lblPosition.ForeColor = Color.FromArgb(100, 100, 100);
+                lblContact.ForeColor = Color.FromArgb(100, 100, 100);
+
+                // Button styling
+                btnClose.BackColor = Color.FromArgb(0, 120, 215);
                 btnClose.ForeColor = Color.White;
-                btnClose.FlatStyle = FlatStyle.Flat;
                 btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 215);
+                btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 140, 235);
+                btnClose.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 100, 195);
             }
+
+            // Common styling that applies to both themes
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.FlatAppearance.BorderSize = 1;
+            btnClose.Cursor = Cursors.Hand;
+            btnClose.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
-        // This function animates the title text with a glowing effect.
         private void AnimateGlowEffect()
         {
             glowTimer = new Timer();
-            glowTimer.Interval = 100; // Interval for glow effect
+            glowTimer.Interval = 100;
             glowTimer.Tick += (sender, args) =>
             {
-                lblTitle.ForeColor = Color.FromArgb(
-                    (int)(Math.Abs(Math.Sin(DateTime.Now.Ticks / 10000000.0) * 255)),
-                    0,
-                    120, 215);
+                glowPhase = (glowPhase + 1) % glowColors.Length;
+                lblTitle.ForeColor = glowColors[glowPhase];
             };
             glowTimer.Start();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();  // Close the form when the button is clicked
+            this.Close();
         }
 
         #region Windows Form Designer generated code
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblDescription;
-        private System.Windows.Forms.Label lblAboutMe;
-        private System.Windows.Forms.Label lblProjectInfo;
-        private System.Windows.Forms.Label lblFeatures;
-        private System.Windows.Forms.Label lblUseCases;
-        private System.Windows.Forms.Label lblTechnicalStack;
-        private System.Windows.Forms.Button btnClose;
+        private Panel panelMain;
+        private Label lblTitle;
+        private Label lblVersion;
+        private Label lblDescription;
+        private Label lblFeatures;
+        private Label lblUseCases;
+        private Label lblTechnicalStack;
+        private Label lblDeveloper;
+        private Label lblDeveloperName;
+        private Label lblPosition;
+        private Label lblContact;
+        private Button btnClose;
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lblDescription = new System.Windows.Forms.Label();
-            this.lblAboutMe = new System.Windows.Forms.Label();
-            this.lblProjectInfo = new System.Windows.Forms.Label();
-            this.lblFeatures = new System.Windows.Forms.Label();
-            this.lblUseCases = new System.Windows.Forms.Label();
-            this.lblTechnicalStack = new System.Windows.Forms.Label();
-            this.btnClose = new System.Windows.Forms.Button();
+            this.panelMain = new Panel();
+            this.lblTitle = new Label();
+            this.lblVersion = new Label();
+            this.lblDescription = new Label();
+            this.lblFeatures = new Label();
+            this.lblUseCases = new Label();
+            this.lblTechnicalStack = new Label();
+            this.lblDeveloper = new Label();
+            this.lblDeveloperName = new Label();
+            this.lblPosition = new Label();
+            this.lblContact = new Label();
+            this.btnClose = new Button();
+            this.panelMain.SuspendLayout();
             this.SuspendLayout();
 
+            // panelMain
+            this.panelMain.Controls.Add(this.lblTitle);
+            this.panelMain.Controls.Add(this.lblVersion);
+            this.panelMain.Controls.Add(this.lblDescription);
+            this.panelMain.Controls.Add(this.lblFeatures);
+            this.panelMain.Controls.Add(this.lblUseCases);
+            this.panelMain.Controls.Add(this.lblTechnicalStack);
+            this.panelMain.Controls.Add(this.lblDeveloper);
+            this.panelMain.Controls.Add(this.lblDeveloperName);
+            this.panelMain.Controls.Add(this.lblPosition);
+            this.panelMain.Controls.Add(this.lblContact);
+            this.panelMain.Controls.Add(this.btnClose);
+            this.panelMain.Location = new Point(10, 10);
+            this.panelMain.Size = new Size(760, 680);
+            this.panelMain.TabIndex = 0;
+
             // lblTitle
-            this.lblTitle.Font = new Font("Segoe UI", 28F, FontStyle.Bold, GraphicsUnit.Point);
-            this.lblTitle.Location = new Point(50, 20);
-            this.lblTitle.Size = new Size(700, 50);
-            this.lblTitle.Text = "About TDM IP Tracker";
+            this.lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point);
+            this.lblTitle.Location = new Point(20, 20);
+            this.lblTitle.Size = new Size(720, 40);
             this.lblTitle.TextAlign = ContentAlignment.MiddleCenter;
 
+            // lblVersion
+            this.lblVersion.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblVersion.Location = new Point(20, 70);
+            this.lblVersion.Size = new Size(720, 20);
+            this.lblVersion.TextAlign = ContentAlignment.MiddleCenter;
+
             // lblDescription
-            this.lblDescription.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblDescription.Location = new Point(50, 80);
-            this.lblDescription.Size = new Size(700, 80);
-            this.lblDescription.Text = "TDM IP Tracker is a powerful network monitoring and security tool designed for professionals to track, analyze, and optimize network performance.";
+            this.lblDescription.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblDescription.Location = new Point(30, 110);
+            this.lblDescription.Size = new Size(700, 60);
+            this.lblDescription.TextAlign = ContentAlignment.MiddleCenter;
 
-            // lblAboutMe
-            this.lblAboutMe.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblAboutMe.Location = new Point(50, 170);
-            this.lblAboutMe.Size = new Size(700, 80);
-            this.lblAboutMe.Text = "Developed by Tarakanta Dasmohapatra\nSenior Associate at Jindal Nature Cure\nContact: tmohapatra111@gmail.com\nMobile: 8114627876";
+            // Section headers and content with better spacing
+            int yPos = 190;
 
-            // lblProjectInfo
-            this.lblProjectInfo.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblProjectInfo.Location = new Point(50, 260);
-            this.lblProjectInfo.Size = new Size(700, 80);
-            this.lblProjectInfo.Text = "This project was created to gather detailed network information for security, speed, and performance optimization.";
+            // Features section
+            var lblFeaturesHeader = new Label();
+            lblFeaturesHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblFeaturesHeader.Location = new Point(30, yPos);
+            lblFeaturesHeader.Size = new Size(700, 25);
+            lblFeaturesHeader.Text = "KEY FEATURES";
+            lblFeaturesHeader.ForeColor = darkMode ? Color.FromArgb(0, 180, 255) : Color.FromArgb(0, 120, 215);
+            panelMain.Controls.Add(lblFeaturesHeader);
+            yPos += 30;
 
-            // lblFeatures
-            this.lblFeatures.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblFeatures.Location = new Point(50, 350);
-            this.lblFeatures.Size = new Size(700, 80);
-            this.lblFeatures.Text = "Key Features:\n- Single IP Scanner\n- Mass IP Scanner\n- Port Scanner\n- Network Monitor\n- Ping Test\n- Wi-Fi Scanner\n- Packet Tracker";
+            this.lblFeatures.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblFeatures.Location = new Point(50, yPos);
+            this.lblFeatures.Size = new Size(320, 150);
+            yPos += 160;
 
-            // lblUseCases
-            this.lblUseCases.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblUseCases.Location = new Point(50, 450);
-            this.lblUseCases.Size = new Size(700, 80);
-            this.lblUseCases.Text = "Use Cases:\n- IT Security\n- Cybersecurity\n- Network Engineers\n- Healthcare IT\n- Home Networking\n- Educational Institutions";
+            // Use Cases section
+            var lblUseCasesHeader = new Label();
+            lblUseCasesHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblUseCasesHeader.Location = new Point(30, yPos);
+            lblUseCasesHeader.Size = new Size(700, 25);
+            lblUseCasesHeader.Text = "USE CASES";
+            lblUseCasesHeader.ForeColor = darkMode ? Color.FromArgb(0, 180, 255) : Color.FromArgb(0, 120, 215);
+            panelMain.Controls.Add(lblUseCasesHeader);
+            yPos += 30;
 
-            // lblTechnicalStack
-            this.lblTechnicalStack.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.lblTechnicalStack.Location = new Point(50, 540);
-            this.lblTechnicalStack.Size = new Size(700, 60);
-            this.lblTechnicalStack.Text = "Technical Stack:\n- .NET Framework\n- C#\n- SharpPcap\n- Windows Forms";
+            this.lblUseCases.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblUseCases.Location = new Point(50, yPos);
+            this.lblUseCases.Size = new Size(320, 150);
+            yPos += 160;
+
+            // Technical Stack section
+            var lblTechHeader = new Label();
+            lblTechHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTechHeader.Location = new Point(30, yPos);
+            lblTechHeader.Size = new Size(700, 25);
+            lblTechHeader.Text = "TECHNICAL STACK";
+            lblTechHeader.ForeColor = darkMode ? Color.FromArgb(0, 180, 255) : Color.FromArgb(0, 120, 215);
+            panelMain.Controls.Add(lblTechHeader);
+            yPos += 30;
+
+            this.lblTechnicalStack.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblTechnicalStack.Location = new Point(50, yPos);
+            this.lblTechnicalStack.Size = new Size(320, 100);
+
+            // Developer info (right side)
+            int rightColX = 400;
+            yPos = 190;
+
+            var lblDevHeader = new Label();
+            lblDevHeader.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblDevHeader.Location = new Point(rightColX, yPos);
+            lblDevHeader.Size = new Size(300, 25);
+            lblDevHeader.Text = "DEVELOPER INFORMATION";
+            lblDevHeader.ForeColor = darkMode ? Color.FromArgb(0, 180, 255) : Color.FromArgb(0, 120, 215);
+            panelMain.Controls.Add(lblDevHeader);
+            yPos += 40;
+
+            this.lblDeveloper.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblDeveloper.Location = new Point(rightColX, yPos);
+            this.lblDeveloper.Size = new Size(300, 20);
+            yPos += 30;
+
+            this.lblDeveloperName.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            this.lblDeveloperName.Location = new Point(rightColX, yPos);
+            this.lblDeveloperName.Size = new Size(300, 25);
+            yPos += 35;
+
+            this.lblPosition.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblPosition.Location = new Point(rightColX, yPos);
+            this.lblPosition.Size = new Size(300, 40);
+            yPos += 50;
+
+            this.lblContact.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            this.lblContact.Location = new Point(rightColX, yPos);
+            this.lblContact.Size = new Size(300, 20);
 
             // btnClose
-            this.btnClose.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            this.btnClose.Location = new Point(650, 620);
-            this.btnClose.Size = new Size(100, 40);
+            this.btnClose.Size = new Size(120, 35);
+            this.btnClose.Location = new Point(panelMain.Width - 140, panelMain.Height - 50);
             this.btnClose.Text = "Close";
+            this.btnClose.TabIndex = 0;
             this.btnClose.Click += new EventHandler(this.btnClose_Click);
 
             // AboutForm
-            this.ClientSize = new Size(800, 700);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.lblDescription);
-            this.Controls.Add(this.lblAboutMe);
-            this.Controls.Add(this.lblProjectInfo);
-            this.Controls.Add(this.lblFeatures);
-            this.Controls.Add(this.lblUseCases);
-            this.Controls.Add(this.lblTechnicalStack);
-            this.Controls.Add(this.btnClose);
-            this.Name = "AboutForm";
+            this.ClientSize = new Size(780, 700);
+            this.Controls.Add(this.panelMain);
+            this.Text = "About TDM IP Tracker";
             this.Load += new EventHandler(this.AboutForm_Load);
+            this.panelMain.ResumeLayout(false);
             this.ResumeLayout(false);
         }
         #endregion

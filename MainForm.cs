@@ -287,7 +287,7 @@ namespace TDM_IP_Tracker
 
         #endregion
 
- 
+
         private void BtnPingVulnerabilityScan_Click(object sender, EventArgs e)
         {
             // Create an instance of the PingVulnerabilityScannerForm
@@ -391,6 +391,15 @@ namespace TDM_IP_Tracker
                 // Handle any exceptions (e.g., if the icon isn't found or there's an issue with the resources)
                 MessageBox.Show($"Error loading icon: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void documentationToolStripMenuItem_Click_2(object sender, EventArgs e)
+        {
+            NetworkCommandReference ncrform= new NetworkCommandReference();
+            LoadFormIcon(ncrform);
+
+            ncrform.Show();
+
         }
 
         //private void LoadFormIcon()

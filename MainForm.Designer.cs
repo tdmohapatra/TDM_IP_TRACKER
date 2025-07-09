@@ -204,18 +204,22 @@
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(157, 22);
+            aboutToolStripMenuItem.Size = new Size(180, 22);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click_1;
             // 
             // documentationToolStripMenuItem
             // 
             documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            documentationToolStripMenuItem.Size = new Size(157, 22);
+            documentationToolStripMenuItem.Size = new Size(180, 22);
             documentationToolStripMenuItem.Text = "Documentation";
+            documentationToolStripMenuItem.Click += documentationToolStripMenuItem_Click_2;
             // 
+            // myMapToolStripMenuItem
             // 
-    
+            myMapToolStripMenuItem.Name = "myMapToolStripMenuItem";
+            myMapToolStripMenuItem.Size = new Size(12, 20);
+            // 
             // gOOGLEMAPToolStripMenuItem
             // 
             gOOGLEMAPToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { gOOGLEMAPToolStripMenuItem1, sTREETMAPToolStripMenuItem });
